@@ -1,0 +1,34 @@
+
+VERSION := testing
+
+SRC_DIR := .
+TARGET_DIR := ../bin/$(VERSION)
+
+INSTALL_WIN_FILE := install_host_app.bat
+INSTALL_WIN_SRC := $(SRC_DIR)/$(INSTALL_WIN_FILE)
+INSTALL_WIN_TARGET := $(TARGET_DIR)/$(INSTALL_WIN_FILE)
+
+INSTALL_UNIX_FILE := install_host_app.sh
+INSTALL_UNIX_SRC := $(SRC_DIR)/$(INSTALL_UNIX_FILE)
+INSTALL_UNIX_TARGET := $(TARGET_DIR)/$(INSTALL_UNIX_FILE)
+
+HOST_APP_FILES := passff.py passff.json
+HOST_APP_SRC := $(addprefix $(SRC_DIR)/,$(HOST_APP_FILES))
+HOST_APP_TARGET := $(addprefix $(TARGET_DIR)/,$(HOST_APP_FILES))
+
+HOST_TARGETS := $(INSTALL_WIN_TARGET) $(INSTALL_UNIX_TARGET) $(HOST_APP_TARGET)
+
+all: $(HOST_TARGETS)
+
+%/.d:
+	mkdir -p $(@D)
+	@touch $@
+
+$(HOST_TARGETS): $(TARGET_DIR)/%: $(SRC_DIR)/% $(TARGET_DIR)/.d
+	cp $(SRC_DIR)/$* $@
+	sed -i "s/_VERSIONHOLDER_/$(VERSION)/g" $@
+
+clean:
+	rm -rf $(TARGET_DIR)
+
+.PRECIOUS: %/.d
