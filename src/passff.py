@@ -50,22 +50,26 @@ def sendMessage(encodedMessage):
 if __name__ == "__main__":
     # Read message from standard input
     receivedMessage = getMessage()
-    args = []
+    opt_args = []
+    pos_args = []
     stdin = None
 
     if len(receivedMessage) == 0:
         pass
     elif receivedMessage[0] == "insert":
-        args = ["insert", "-m", receivedMessage[1]]
+        opt_args = ["insert", "-m"]
+        pos_args = [receivedMessage[1]]
         stdin = receivedMessage[2]
     elif receivedMessage[0] == "generate":
-        args = ["generate", receivedMessage[1], receivedMessage[2]]
-        if "-n" in receivedMessage:
-            args.append("-n")
+        pos_args = [receivedMessage[1], receivedMessage[2]]
+        opt_args = ["generate"]
+        if "-n" in receivedMessage[3:]:
+            opt_args.append("-n")
     else:
         key = receivedMessage[0]
-        key = "/" + key if key[0] != "/" else key
-        args.append(key)
+        key = "/" + (key[1:] if key[0] == "/" else key)
+        pos_args = [key]
+    opt_args += commandArgs
 
     # Set up (modified) command environment
     env = dict(os.environ)
@@ -75,7 +79,7 @@ if __name__ == "__main__":
         env[key] = val
 
     # Set up subprocess params
-    cmd = [command] + args + commandArgs
+    cmd = [command] + opt_args + ['--'] + pos_args
     proc_params = {
         'stdout': subprocess.PIPE,
         'stderr': subprocess.PIPE,
