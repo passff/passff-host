@@ -81,25 +81,19 @@ if __name__ == "__main__":
     # Set up subprocess params
     cmd = [command] + opt_args + ['--'] + pos_args
     proc_params = {
+        'input': bytes(std_input, charset) if std_input else None,
         'stdout': subprocess.PIPE,
         'stderr': subprocess.PIPE,
         'env': env
     }
-    if std_input is not None:
-      proc_params['stdin'] = subprocess.PIPE
 
     # Run and communicate with pass script
-    proc = subprocess.Popen(cmd, **proc_params)
-    if std_input is not None:
-      proc_in = bytes(std_input, charset)
-      proc_out, proc_err = proc.communicate(input=proc_in)
-    else:
-      proc_out, proc_err = proc.communicate()
+    proc = subprocess.run(cmd, **proc_params)
 
     # Send response
     sendMessage(encodeMessage({
         "exitCode": proc.returncode,
-        "stdout": proc_out.decode(charset),
-        "stderr": proc_err.decode(charset),
+        "stdout": proc.stdout.decode(charset),
+        "stderr": proc.stderr.decode(charset),
         "version": VERSION
     }))
