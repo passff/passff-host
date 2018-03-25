@@ -9,11 +9,21 @@ APP_NAME="passff"
 VERSION="_VERSIONHOLDER_"
 HOST_URL="https://github.com/passff/passff-host/releases/download/$VERSION/passff.py"
 MANIFEST_URL="https://github.com/passff/passff-host/releases/download/$VERSION/passff.json"
+KERNEL_NAME=$(uname -s)
+
+case "$KERNEL_NAME" in
+  *BSD*)
+    IS_BSD=true
+    ;;
+  *)
+    IS_BSD=false
+    ;;
+esac
 
 # Find target dirs for various browsers & OS'es
 # https://developer.chrome.com/extensions/nativeMessaging#native-messaging-host-location
 # https://wiki.mozilla.org/WebExtensions/Native_Messaging
-if [ $(uname -s) == 'Darwin' ]; then
+if [ "$KERNEL_NAME" == 'Darwin' ]; then
   if [ "$(whoami)" == "root" ]; then
     TARGET_DIR_CHROME="/Library/Google/Chrome/NativeMessagingHosts"
     TARGET_DIR_CHROMIUM="/Library/Application Support/Chromium/NativeMessagingHosts"
@@ -116,8 +126,8 @@ else
   curl -sSL "$MANIFEST_URL" > "$MANIFEST_FILE_PATH"
 fi
 
-
-if [ $(uname -s) == 'Darwin' ]; then
+if [ "$KERNEL_NAME" == 'Darwin' ] || [ "$IS_BSD" = true ]; then
+  # Use BSD style sed on macOS and BSD systems
   # Replace path to python3 executable
   /usr/bin/sed -i '' "1 s@.*@#\!${PYTHON3_PATH}@" "$HOST_FILE_PATH"
   # Replace path to host
