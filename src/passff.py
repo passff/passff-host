@@ -52,14 +52,14 @@ if __name__ == "__main__":
     receivedMessage = getMessage()
     opt_args = []
     pos_args = []
-    stdin = None
+    std_input = None
 
     if len(receivedMessage) == 0:
         pass
     elif receivedMessage[0] == "insert":
         opt_args = ["insert", "-m"]
         pos_args = [receivedMessage[1]]
-        stdin = receivedMessage[2]
+        std_input = receivedMessage[2]
     elif receivedMessage[0] == "generate":
         pos_args = [receivedMessage[1], receivedMessage[2]]
         opt_args = ["generate"]
@@ -85,13 +85,13 @@ if __name__ == "__main__":
         'stderr': subprocess.PIPE,
         'env': env
     }
-    if 'stdin' is not None:
+    if std_input is not None:
       proc_params['stdin'] = subprocess.PIPE
 
     # Run and communicate with pass script
     proc = subprocess.Popen(cmd, **proc_params)
-    if stdin is not None:
-      proc_in = bytes(stdin, charset)
+    if std_input is not None:
+      proc_in = bytes(std_input, charset)
       proc_out, proc_err = proc.communicate(input=proc_in)
     else:
       proc_out, proc_err = proc.communicate()
