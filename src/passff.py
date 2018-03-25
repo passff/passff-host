@@ -13,15 +13,15 @@ VERSION = "_VERSIONHOLDER_"
 ######################## Begin preferences section #############################
 ################################################################################
 # Default command for MacOS:
-#command = "/usr/local/bin/pass"
-command     = "/usr/bin/pass"
-commandArgs = []
-commandEnv  = {
+#COMMAND = "/usr/local/bin/pass"
+COMMAND      = "/usr/bin/pass"
+COMMAND_ARGS = []
+COMMAND_ENV  = {
     "TREE_CHARSET": "ISO-8859-1",
     # Default PATH for MacOS:
     #"PATH": "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
 }
-charset     = "UTF-8"
+CHARSET      = "UTF-8"
 ################################################################################
 ######################### End preferences section ##############################
 ################################################################################
@@ -52,14 +52,14 @@ if __name__ == "__main__":
     receivedMessage = getMessage()
     opt_args = []
     pos_args = []
-    stdin = None
+    std_input = None
 
     if len(receivedMessage) == 0:
         pass
     elif receivedMessage[0] == "insert":
         opt_args = ["insert", "-m"]
         pos_args = [receivedMessage[1]]
-        stdin = receivedMessage[2]
+        std_input = receivedMessage[2]
     elif receivedMessage[0] == "generate":
         pos_args = [receivedMessage[1], receivedMessage[2]]
         opt_args = ["generate"]
@@ -69,37 +69,31 @@ if __name__ == "__main__":
         key = receivedMessage[0]
         key = "/" + (key[1:] if key[0] == "/" else key)
         pos_args = [key]
-    opt_args += commandArgs
+    opt_args += COMMAND_ARGS
 
     # Set up (modified) command environment
     env = dict(os.environ)
     if "HOME" not in env:
         env["HOME"] = os.path.expanduser('~')
-    for key, val in commandEnv.items():
+    for key, val in COMMAND_ENV.items():
         env[key] = val
 
     # Set up subprocess params
-    cmd = [command] + opt_args + ['--'] + pos_args
+    cmd = [COMMAND] + opt_args + ['--'] + pos_args
     proc_params = {
+        'input': bytes(std_input, CHARSET) if std_input else None,
         'stdout': subprocess.PIPE,
         'stderr': subprocess.PIPE,
         'env': env
     }
-    if 'stdin' is not None:
-      proc_params['stdin'] = subprocess.PIPE
 
     # Run and communicate with pass script
-    proc = subprocess.Popen(cmd, **proc_params)
-    if stdin is not None:
-      proc_in = bytes(stdin, charset)
-      proc_out, proc_err = proc.communicate(input=proc_in)
-    else:
-      proc_out, proc_err = proc.communicate()
+    proc = subprocess.run(cmd, **proc_params)
 
     # Send response
     sendMessage(encodeMessage({
         "exitCode": proc.returncode,
-        "stdout": proc_out.decode(charset),
-        "stderr": proc_err.decode(charset),
+        "stdout": proc.stdout.decode(CHARSET),
+        "stderr": proc.stderr.decode(CHARSET),
         "version": VERSION
     }))
