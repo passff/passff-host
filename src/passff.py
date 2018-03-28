@@ -12,9 +12,7 @@ VERSION = "_VERSIONHOLDER_"
 ################################################################################
 ######################## Begin preferences section #############################
 ################################################################################
-# Default command for MacOS:
-#COMMAND = "/usr/local/bin/pass"
-COMMAND      = "/usr/bin/pass"
+COMMAND = subprocess.check_output("which pass", shell=True).strip()
 COMMAND_ARGS = []
 COMMAND_ENV  = {
     "TREE_CHARSET": "ISO-8859-1",
