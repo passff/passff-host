@@ -11,8 +11,10 @@ HOST_URL="https://github.com/passff/passff-host/releases/download/$VERSION/passf
 MANIFEST_URL="https://github.com/passff/passff-host/releases/download/$VERSION/passff.json"
 KERNEL_NAME=$(uname -s)
 
+PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
+
 case "$KERNEL_NAME" in
-  *BSD*)
+  *BSD* | *Darwin*)
     IS_BSD=true
     ;;
   *)
@@ -102,6 +104,14 @@ else
   exit 1
 fi
 
+PASS_PATH="$(which pass)"
+if [ -x "$PASS_PATH" ]; then
+  echo "Pass executable located at $PASS_PATH"
+else
+  echo "Pass executable not found, but Pass is required for PassFF to work!"
+  exit 1
+fi
+
 if [ -z "$TARGET_DIR" ]; then
   usage
   exit 1
@@ -126,16 +136,26 @@ else
   curl -sSL "$MANIFEST_URL" > "$MANIFEST_FILE_PATH"
 fi
 
-# When using sed on macOS, backup extension is an mandatory argument
-#   whereas on GNU sed or BSD sed backup extension may be omit.
-if [ "$KERNEL_NAME" == 'Darwin' ]; then
+if [ "$IS_BSD" = true ]; then
+  # Use BSD style sed on BSD-ish systems
   # Replace path to python3 executable
   /usr/bin/sed -i '' "1 s@.*@#\!${PYTHON3_PATH}@" "$HOST_FILE_PATH"
+  # Replace path to pass (only in a line starting with `COMMAND =`)
+  /usr/bin/sed -i '' "/^COMMAND *=/s@\"pass\"@\"$PASS_PATH\"@" "$HOST_FILE_PATH"
+  # Set the PATH to match this script's
+  /usr/bin/sed -i '' "s@\"PATH\":.*@\"PATH\": \"$PATH\"@" "$HOST_FILE_PATH"
+
   # Replace path to host
   /usr/bin/sed -i '' -e "s/PLACEHOLDER/$ESCAPED_HOST_FILE_PATH/" "$MANIFEST_FILE_PATH"
+
 else
   # Replace path to python3 executable
   sed -i "1 s@.*@#\!${PYTHON3_PATH}@" "$HOST_FILE_PATH"
+  # Replace path to pass (only in a line starting with `COMMAND =`)
+  /usr/bin/sed -i -e "/^COMMAND *=/s@\"pass\"@\"$PASS_PATH\"@" "$HOST_FILE_PATH"
+  # Set the PATH to match this script's
+  /usr/bin/sed -i -e "s@\"PATH\":.*@\"PATH\": \"$PATH\"@" "$HOST_FILE_PATH"
+
   # Replace path to host
   sed -i -e "s/PLACEHOLDER/$ESCAPED_HOST_FILE_PATH/" "$MANIFEST_FILE_PATH"
 fi
