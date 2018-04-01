@@ -25,8 +25,7 @@ all: $(HOST_TARGETS)
 	@touch $@
 
 $(HOST_TARGETS): $(TARGET_DIR)/%: $(SRC_DIR)/% $(TARGET_DIR)/.d
-	cp $(SRC_DIR)/$* $@
-	sed -i "s/_VERSIONHOLDER_/$(VERSION)/g" $@
+	sed -e "s/_VERSIONHOLDER_/$(VERSION)/g" < $(SRC_DIR)/$* > $@
 
 clean:
 	rm -rf $(TARGET_DIR)
