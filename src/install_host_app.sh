@@ -126,15 +126,16 @@ else
   curl -sSL "$MANIFEST_URL" > "$MANIFEST_FILE_PATH"
 fi
 
-if [ "$KERNEL_NAME" == 'Darwin' ] || [ "$IS_BSD" = true ]; then
-  # Use BSD style sed on macOS and BSD systems
+# When using sed on macOS, backup extension is an mandatory argument
+#   whereas on GNU sed or BSD sed backup extension may be omit.
+if [ "$KERNEL_NAME" == 'Darwin' ]; then
   # Replace path to python3 executable
   /usr/bin/sed -i '' "1 s@.*@#\!${PYTHON3_PATH}@" "$HOST_FILE_PATH"
   # Replace path to host
   /usr/bin/sed -i '' -e "s/PLACEHOLDER/$ESCAPED_HOST_FILE_PATH/" "$MANIFEST_FILE_PATH"
 else
   # Replace path to python3 executable
-  sed -i "1c#\!${PYTHON3_PATH}" "$HOST_FILE_PATH"
+  sed -i "1 s@.*@#\!${PYTHON3_PATH}@" "$HOST_FILE_PATH"
   # Replace path to host
   sed -i -e "s/PLACEHOLDER/$ESCAPED_HOST_FILE_PATH/" "$MANIFEST_FILE_PATH"
 fi
