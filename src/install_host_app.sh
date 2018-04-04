@@ -108,45 +108,32 @@ fi
 
 HOST_FILE_PATH="$TARGET_DIR/$APP_NAME.py"
 MANIFEST_FILE_PATH="$TARGET_DIR/$APP_NAME.json"
-ESCAPED_HOST_FILE_PATH="${HOST_FILE_PATH////\\/}"
 
 echo "Installing $BROWSER_NAME host config"
 
 # Create config dir if not existing
 mkdir -p "$TARGET_DIR"
 
+# Replace path to python3 executable \
+# Replace path to pass (only in a line starting with "COMMAND =") \
+# Set the PATH to match this script's \
+HOST_SED=" \
+1 s@.*@#!${PYTHON3_PATH}@; \
+/^COMMAND *=/s@\"pass\"@\"$PASS_PATH\"@; \
+s@\"PATH\":.*@\"PATH\": \"$PATH\"@; \
+"
+# Replace path to host \
+MANIFEST_SED=" \
+s@PLACEHOLDER@$HOST_FILE_PATH@; \
+"
+
 if [ "$USE_LOCAL_FILES" = true ]; then
-  DIR="$( cd "$( dirname "$0" )" && pwd )"
-  cp "$DIR/passff.py"   "$HOST_FILE_PATH"
-  cp "$DIR/passff.json" "$MANIFEST_FILE_PATH"
+  sed -e "${HOST_SED}"     "$(dirname "$0")/passff.py"   >  "$HOST_FILE_PATH"
+  sed -e "${MANIFEST_SED}" "$(dirname "$0")/passff.json" >  "$MANIFEST_FILE_PATH"
 else
   # Download native host script and manifest
-  curl -sSL "$HOST_URL"     > "$HOST_FILE_PATH"
-  curl -sSL "$MANIFEST_URL" > "$MANIFEST_FILE_PATH"
-fi
-
-if [ "$IS_BSD" = true ]; then
-  # Use BSD style sed on BSD-ish systems
-  # Replace path to python3 executable
-  /usr/bin/sed -i '' "1 s@.*@#\!${PYTHON3_PATH}@" "$HOST_FILE_PATH"
-  # Replace path to pass (only in a line starting with `COMMAND =`)
-  /usr/bin/sed -i '' "/^COMMAND *=/s@\"pass\"@\"$PASS_PATH\"@" "$HOST_FILE_PATH"
-  # Set the PATH to match this script's
-  /usr/bin/sed -i '' "s@\"PATH\":.*@\"PATH\": \"$PATH\"@" "$HOST_FILE_PATH"
-
-  # Replace path to host
-  /usr/bin/sed -i '' -e "s/PLACEHOLDER/$ESCAPED_HOST_FILE_PATH/" "$MANIFEST_FILE_PATH"
-
-else
-  # Replace path to python3 executable
-  sed -i "1 s@.*@#\!${PYTHON3_PATH}@" "$HOST_FILE_PATH"
-  # Replace path to pass (only in a line starting with `COMMAND =`)
-  /usr/bin/sed -i -e "/^COMMAND *=/s@\"pass\"@\"$PASS_PATH\"@" "$HOST_FILE_PATH"
-  # Set the PATH to match this script's
-  /usr/bin/sed -i -e "s@\"PATH\":.*@\"PATH\": \"$PATH\"@" "$HOST_FILE_PATH"
-
-  # Replace path to host
-  sed -i -e "s/PLACEHOLDER/$ESCAPED_HOST_FILE_PATH/" "$MANIFEST_FILE_PATH"
+  curl -sSL "$HOST_URL"     | sed -e "${HOST_SED}"     > "$HOST_FILE_PATH"
+  curl -sSL "$MANIFEST_URL" | sed -e "${MANIFEST_SED}" > "$MANIFEST_FILE_PATH"
 fi
 
 # Set permissions for the manifest so that all users can read it.
