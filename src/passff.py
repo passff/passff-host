@@ -12,14 +12,11 @@ VERSION = "_VERSIONHOLDER_"
 ################################################################################
 ######################## Begin preferences section #############################
 ################################################################################
-# Default command for MacOS:
-#COMMAND = "/usr/local/bin/pass"
-COMMAND      = "/usr/bin/pass"
+COMMAND      = "pass"
 COMMAND_ARGS = []
 COMMAND_ENV  = {
     "TREE_CHARSET": "ISO-8859-1",
-    # Default PATH for MacOS:
-    #"PATH": "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
+    "PATH": "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
 }
 CHARSET      = "UTF-8"
 ################################################################################

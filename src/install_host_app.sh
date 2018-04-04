@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 # This script is derived from `install.sh` in Danny van Kooten's "browserpass":
 # https://github.com/dannyvankooten/browserpass
@@ -11,20 +11,11 @@ HOST_URL="https://github.com/passff/passff-host/releases/download/$VERSION/passf
 MANIFEST_URL="https://github.com/passff/passff-host/releases/download/$VERSION/passff.json"
 KERNEL_NAME=$(uname -s)
 
-case "$KERNEL_NAME" in
-  *BSD*)
-    IS_BSD=true
-    ;;
-  *)
-    IS_BSD=false
-    ;;
-esac
-
 # Find target dirs for various browsers & OS'es
 # https://developer.chrome.com/extensions/nativeMessaging#native-messaging-host-location
 # https://wiki.mozilla.org/WebExtensions/Native_Messaging
-if [ "$KERNEL_NAME" == 'Darwin' ]; then
-  if [ "$(whoami)" == "root" ]; then
+if [ "$KERNEL_NAME" = 'Darwin' ]; then
+  if [ "$(whoami)" = "root" ]; then
     TARGET_DIR_CHROME="/Library/Google/Chrome/NativeMessagingHosts"
     TARGET_DIR_CHROMIUM="/Library/Application Support/Chromium/NativeMessagingHosts"
     TARGET_DIR_FIREFOX="/Library/Application Support/Mozilla/NativeMessagingHosts"
@@ -36,7 +27,7 @@ if [ "$KERNEL_NAME" == 'Darwin' ]; then
     TARGET_DIR_VIVALDI="$HOME/Library/Application Support/Vivaldi/NativeMessagingHosts"
   fi
 else
-  if [ "$(whoami)" == "root" ]; then
+  if [ "$(whoami)" = "root" ]; then
     TARGET_DIR_CHROME="/etc/opt/chrome/native-messaging-hosts"
     TARGET_DIR_CHROMIUM="/etc/chromium/native-messaging-hosts"
     TARGET_DIR_FIREFOX="/usr/lib/mozilla/native-messaging-hosts"
@@ -49,7 +40,7 @@ else
   fi
 fi
 
-function usage {
+usage() {
   echo "Usage: $0 [OPTION] [chrome|chromium|firefox|opera|vivaldi]
 
   Options:
@@ -57,7 +48,7 @@ function usage {
     -h, --help     Show this message"
 }
 
-while [[ $# -gt 0 ]]; do
+while [ $# -gt 0 ]; do
   case $1 in
     chrome)
       BROWSER_NAME="Chrome"
@@ -102,6 +93,14 @@ else
   exit 1
 fi
 
+PASS_PATH="$(which pass)"
+if [ -x "$PASS_PATH" ]; then
+  echo "Pass executable located at $PASS_PATH"
+else
+  echo "Pass executable not found, but Pass is required for PassFF to work!"
+  exit 1
+fi
+
 if [ -z "$TARGET_DIR" ]; then
   usage
   exit 1
@@ -109,35 +108,32 @@ fi
 
 HOST_FILE_PATH="$TARGET_DIR/$APP_NAME.py"
 MANIFEST_FILE_PATH="$TARGET_DIR/$APP_NAME.json"
-ESCAPED_HOST_FILE_PATH="${HOST_FILE_PATH////\\/}"
 
 echo "Installing $BROWSER_NAME host config"
 
 # Create config dir if not existing
 mkdir -p "$TARGET_DIR"
 
+# Replace path to python3 executable \
+# Replace path to pass (only in a line starting with "COMMAND =") \
+# Set the PATH to match this script's \
+HOST_SED=" \
+1 s@.*@#!${PYTHON3_PATH}@; \
+/^COMMAND *=/s@\"pass\"@\"$PASS_PATH\"@; \
+s@\"PATH\":.*@\"PATH\": \"$PATH\"@; \
+"
+# Replace path to host \
+MANIFEST_SED=" \
+s@PLACEHOLDER@$HOST_FILE_PATH@; \
+"
+
 if [ "$USE_LOCAL_FILES" = true ]; then
-  DIR="$( cd "$( dirname "$0" )" && pwd )"
-  cp "$DIR/passff.py"   "$HOST_FILE_PATH"
-  cp "$DIR/passff.json" "$MANIFEST_FILE_PATH"
+  sed -e "${HOST_SED}"     "$(dirname "$0")/passff.py"   >  "$HOST_FILE_PATH"
+  sed -e "${MANIFEST_SED}" "$(dirname "$0")/passff.json" >  "$MANIFEST_FILE_PATH"
 else
   # Download native host script and manifest
-  curl -sSL "$HOST_URL"     > "$HOST_FILE_PATH"
-  curl -sSL "$MANIFEST_URL" > "$MANIFEST_FILE_PATH"
-fi
-
-# When using sed on macOS, backup extension is an mandatory argument
-#   whereas on GNU sed or BSD sed backup extension may be omit.
-if [ "$KERNEL_NAME" == 'Darwin' ]; then
-  # Replace path to python3 executable
-  /usr/bin/sed -i '' "1 s@.*@#\!${PYTHON3_PATH}@" "$HOST_FILE_PATH"
-  # Replace path to host
-  /usr/bin/sed -i '' -e "s/PLACEHOLDER/$ESCAPED_HOST_FILE_PATH/" "$MANIFEST_FILE_PATH"
-else
-  # Replace path to python3 executable
-  sed -i "1 s@.*@#\!${PYTHON3_PATH}@" "$HOST_FILE_PATH"
-  # Replace path to host
-  sed -i -e "s/PLACEHOLDER/$ESCAPED_HOST_FILE_PATH/" "$MANIFEST_FILE_PATH"
+  curl -sSL "$HOST_URL"     | sed -e "${HOST_SED}"     > "$HOST_FILE_PATH"
+  curl -sSL "$MANIFEST_URL" | sed -e "${MANIFEST_SED}" > "$MANIFEST_FILE_PATH"
 fi
 
 # Set permissions for the manifest so that all users can read it.
