@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/usr/bin/env sh
 
 # This script is derived from `install.sh` in Danny van Kooten's "browserpass":
 # https://github.com/dannyvankooten/browserpass
@@ -11,22 +11,11 @@ HOST_URL="https://github.com/passff/passff-host/releases/download/$VERSION/passf
 MANIFEST_URL="https://github.com/passff/passff-host/releases/download/$VERSION/passff.json"
 KERNEL_NAME=$(uname -s)
 
-PATH="/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin"
-
-case "$KERNEL_NAME" in
-  *BSD* | *Darwin*)
-    IS_BSD=true
-    ;;
-  *)
-    IS_BSD=false
-    ;;
-esac
-
 # Find target dirs for various browsers & OS'es
 # https://developer.chrome.com/extensions/nativeMessaging#native-messaging-host-location
 # https://wiki.mozilla.org/WebExtensions/Native_Messaging
-if [ "$KERNEL_NAME" == 'Darwin' ]; then
-  if [ "$(whoami)" == "root" ]; then
+if [ "$KERNEL_NAME" = 'Darwin' ]; then
+  if [ "$(whoami)" = "root" ]; then
     TARGET_DIR_CHROME="/Library/Google/Chrome/NativeMessagingHosts"
     TARGET_DIR_CHROMIUM="/Library/Application Support/Chromium/NativeMessagingHosts"
     TARGET_DIR_FIREFOX="/Library/Application Support/Mozilla/NativeMessagingHosts"
@@ -38,7 +27,7 @@ if [ "$KERNEL_NAME" == 'Darwin' ]; then
     TARGET_DIR_VIVALDI="$HOME/Library/Application Support/Vivaldi/NativeMessagingHosts"
   fi
 else
-  if [ "$(whoami)" == "root" ]; then
+  if [ "$(whoami)" = "root" ]; then
     TARGET_DIR_CHROME="/etc/opt/chrome/native-messaging-hosts"
     TARGET_DIR_CHROMIUM="/etc/chromium/native-messaging-hosts"
     TARGET_DIR_FIREFOX="/usr/lib/mozilla/native-messaging-hosts"
@@ -51,7 +40,7 @@ else
   fi
 fi
 
-function usage {
+usage() {
   echo "Usage: $0 [OPTION] [chrome|chromium|firefox|opera|vivaldi]
 
   Options:
@@ -59,7 +48,7 @@ function usage {
     -h, --help     Show this message"
 }
 
-while [[ $# -gt 0 ]]; do
+while [ $# -gt 0 ]; do
   case $1 in
     chrome)
       BROWSER_NAME="Chrome"
