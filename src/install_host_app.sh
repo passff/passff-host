@@ -114,17 +114,22 @@ echo "Installing $BROWSER_NAME host config"
 # Create config dir if not existing
 mkdir -p "$TARGET_DIR"
 
+PATH_ESC="$(echo $PATH | sed -e 's/@/\\@/g')"
+PASS_PATH_ESC="$(echo $PASS_PATH | sed -e 's/@/\\@/g')"
+HOST_FILE_PATH_ESC="$(echo $HOST_FILE_PATH | sed -e 's/@/\\@/g')"
+PYTHON3_PATH_ESC="$(echo $PYTHON3_PATH | sed -e 's/@/\\@/g')"
+
 # Replace path to python3 executable \
 # Replace path to pass (only in a line starting with "COMMAND =") \
 # Set the PATH to match this script's \
 HOST_SED=" \
-1 s@.*@#!${PYTHON3_PATH}@; \
-/^COMMAND *=/s@\"pass\"@\"$PASS_PATH\"@; \
-s@\"PATH\":.*@\"PATH\": \"$PATH\"@; \
+1 s@.*@#!${PYTHON3_PATH_ESC}@; \
+/^COMMAND *=/s@\"pass\"@\"$PASS_PATH_ESC\"@; \
+s@\"PATH\":.*@\"PATH\": \"$PATH_ESC\"@; \
 "
 # Replace path to host \
 MANIFEST_SED=" \
-s@PLACEHOLDER@$HOST_FILE_PATH@; \
+s@PLACEHOLDER@$HOST_FILE_PATH_ESC@; \
 "
 
 if [ "$USE_LOCAL_FILES" = true ]; then
