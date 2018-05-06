@@ -80,8 +80,8 @@ IF "%USE_LOCAL_FILES%"=="true" (
     COPY /Y "%~dp0%HOST_MANIFEST%" "%HOST_MANIFEST_FULL%"
     COPY /Y "%~dp0%HOST_SCRIPT%" "%HOST_SCRIPT_FULL%"
 ) ELSE (
-    powershell -Command "(New-Object Net.WebClient).DownloadFile('%HOST_URL%', '%HOST_SCRIPT_FULL%')"
-    powershell -Command "(New-Object Net.WebClient).DownloadFile('%MANIFEST_URL%', '%HOST_MANIFEST_FULL%')"
+    powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12; (New-Object Net.WebClient).DownloadFile('%HOST_URL%', '%HOST_SCRIPT_FULL%')"
+    powershell -Command "[Net.ServicePointManager]::SecurityProtocol = [System.Net.SecurityProtocolType]::Tls12; (New-Object Net.WebClient).DownloadFile('%MANIFEST_URL%', '%HOST_MANIFEST_FULL%')"
 )
 
 powershell -Command "(Get-Content '%HOST_MANIFEST_FULL%') -replace 'PLACEHOLDER', '%HOST_BATCH_FULL:\=/%' | Set-Content '%HOST_MANIFEST_FULL%'"
