@@ -8,6 +8,16 @@ Host app for the WebExtension **[PassFF](https://addons.mozilla.org/firefox/addo
 ### Overview
 This piece of software wraps around the **[zx2c4 pass](http://www.zx2c4.com/projects/password-store/)** shell command. It has to be installed for the PassFF browser extension to work properly.
 
+### Dependencies
+
+#### For the host application
+* [`python3`](https://docs.python.org/3.5/) (>= 3.5)
+* [`pass`](https://www.passwordstore.org/)
+
+#### For the install script (except Windows)
+* `curl`
+* `sed`
+
 ### Installation
 Download the `install_host_app.sh` script from [our releases page](https://github.com/passff/passff-host/releases) and execute it. You can do this in one line like so:
 
