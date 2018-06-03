@@ -129,6 +129,21 @@ When the PATH variable is not set correctly, `pass` will complain about not find
 PATH="$(which bash | xargs dirname)" $(which pass)
 ```
 
+### Advanced Troubleshooting
+If nothing above has worked out your issue...
+
+#### Gather information in the web browser
+In the preferences of PassFF, you can enable the status bar and debug logs in the Web Console (to open the console: Ctrl+Shift+K in Firefox, Ctrl+Shift+J in Chrome/Chromium). Enable the debugging mode in `about:debugging`, and reload the app.
+
+#### Make sure the version of the host application is supported by PassFF
+* Open the `passff.py` file to find its version number
+  * `head /path/to/passff.py`
+
+#### Check the output of the host app
+* Run `echo -e "\x02\x00\x00\x00[]" | /path/to/passff.py | tail -c +4; echo`
+* The typical output for an empty store is:
+  * `{"stderr": "", "version": "1.0.1", "exitCode": 0, "stdout": "Password Store\n"}`
+
 ### Preferences
 By modifying the `preferences section` in `passff.py` you will be able to set
   - the path to the `pass` script,
