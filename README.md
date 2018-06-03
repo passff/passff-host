@@ -145,8 +145,10 @@ In the preferences of PassFF, you can enable the status bar and debug logs in th
   * `{"stderr": "", "version": "1.0.1", "exitCode": 0, "stdout": "Password Store\n"}`
 
 ### Preferences
-By modifying the `preferences section` in `passff.py` you will be able to set
-  - the path to the `pass` script,
-  - additional command line arguments that are passed to `pass`,
-  - the shell `stdout` charset,
-  - additional environment variables.
+If you use a customized `pass` installation: environment variables, customized repository path or extensions, you may have to customize the *preferences section* in `passff.py`.
+
+By modifying the *preferences section* in `passff.py`, you will be able to set:
+  - `COMMAND`: the path to the `pass` script,
+  - `COMMAND_ARGS`: additional command line arguments that are passed to `pass`,
+  - `COMMAND_ENV`: additional environment variables,
+  - `CHARSET`: the shell stdout charset.
