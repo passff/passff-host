@@ -8,7 +8,20 @@ Host app for the WebExtension **[PassFF](https://addons.mozilla.org/firefox/addo
 ### Overview
 This piece of software wraps around the **[zx2c4 pass](http://www.zx2c4.com/projects/password-store/)** shell command. It has to be installed for the PassFF browser extension to work properly.
 
+### Dependencies
+
+#### For the host application
+* [`python3`](https://docs.python.org/3.5/) (>= 3.5)
+* [`pass`](https://www.passwordstore.org/)
+
+#### For the install script (except Windows)
+* `curl`
+* `sed`
+
 ### Installation
+
+#### Linux, MacOS, * BSD
+
 Download the `install_host_app.sh` script from [our releases page](https://github.com/passff/passff-host/releases) and execute it. You can do this in one line like so:
 
 ```
@@ -44,12 +57,13 @@ This will copy the host application and manifest files to the right place for yo
 
 If this doesn't work, you can link the files yourself. First, change the `path` value in the `passff.json` file to be the absolute path to the project's `bin/testing/passff.py` file. Then symlink (or copy) the file `bin/testing/passff.json` to the appropriate location for your browser and OS:
 
-- Firefox
+- [Firefox](https://developer.mozilla.org/en-US/Add-ons/WebExtensions/Native_manifests#Manifest_location)
   - Linux
     - Per-user: `~/.mozilla/native-messaging-hosts/passff.json`
     - System-wide: `/usr/{lib,lib64,share}/mozilla/native-messaging-hosts/passff.json`
   - OS X
-    - `/Library/Application Support/Mozilla/NativeMessagingHosts/passff.json`
+    - Per-user: `~/Library/Application Support/Mozilla/NativeMessagingHosts/passff.json`
+    - System-wide: `/Library/Application Support/Mozilla/NativeMessagingHosts/passff.json`
   - Windows
     - Per-user: `Path contained in registry key HKEY_CURRENT_USER\Software\Mozilla\NativeMessagingHosts\passff`
     - System-wide: `Path contained in registry key HKEY_LOCAL_MACHINE\SOFTWARE\Mozilla\NativeMessagingHosts\passff`
@@ -80,9 +94,61 @@ If this doesn't work, you can link the files yourself. First, change the `path` 
     - Per-user: `~/Library/Application Support/Vivaldi/NativeMessagingHosts/passff.json`
     - System-wide: `/Library/Application Support/Vivaldi/NativeMessagingHosts/passff.json`
 
+### Troubleshooting
+
+#### Script execution failed
+#### Connection to the host app failed or returned an unexpected result
+
+> Connection to the host app failed or returned an unexpected result!
+> Make sure you have the latest version of the PassFF host app installed by following the installation instructions on GitHub.
+
+> Script execution failed.
+
+You get one of these error messages? Follow the instructions below!
+
+###### Remove old installations
+*Inappropriate installations can override another one that could work. So, it is simpler to remove everything and restart from scratch.*
+* Delete any file `passff.json` in the folders `native-messaging-hosts` and `NativeMessagingHosts`
+  * For the complete paths of these folders for your OS and browser, see the section above.
+* Verify all `passff.json` are deleted by doing a search.
+  * Use your best file searching tool. For example: `find / -type f -name 'passff.json'`
+
+###### Reinstall the host application
+See the section above.
+
+###### Check that the host application is correctly installed
+* Make sure the file `passff.py` is executable
+  * `ls -l /path/to/passff.py`
+* Open `passff.json` and verify `path` is set to the absolute path of the host executable `passff.py`: for example `"path": "/path/to/passff.py"`
+
+#### PassFF's host application is not working and takes 99% CPU
+
+###### Set a correct PATH in the `passff.py` script
+When the PATH variable is not set correctly, `pass` will complain about not finding `getopt` and then loop forever. You can reproduce this behavior on the command line:
+```
+PATH="$(which bash | xargs dirname)" $(which pass)
+```
+
+### Advanced Troubleshooting
+If nothing above has worked out your issue...
+
+#### Gather information in the web browser
+In the preferences of PassFF, you can enable the status bar and debug logs in the Web Console (to open the console: Ctrl+Shift+K in Firefox, Ctrl+Shift+J in Chrome/Chromium). Enable the debugging mode in `about:debugging`, and reload the app.
+
+#### Make sure the version of the host application is supported by PassFF
+* Open the `passff.py` file to find its version number
+  * `head /path/to/passff.py`
+
+#### Check the output of the host app
+* Run `echo -e "\x02\x00\x00\x00[]" | /path/to/passff.py | tail -c +4; echo`
+* The typical output for an empty store is:
+  * `{"stderr": "", "version": "1.0.1", "exitCode": 0, "stdout": "Password Store\n"}`
+
 ### Preferences
-By modifying the `preferences section` in `passff.py` you will be able to set
-  - the path to the `pass` script,
-  - additional command line arguments that are passed to `pass`,
-  - the shell `stdout` charset,
-  - additional environment variables.
+If you use a customized `pass` installation: environment variables, customized repository path or extensions, you may have to customize the *preferences section* in `passff.py`.
+
+By modifying the *preferences section* in `passff.py`, you will be able to set:
+  - `COMMAND`: the path to the `pass` script,
+  - `COMMAND_ARGS`: additional command line arguments that are passed to `pass`,
+  - `COMMAND_ENV`: additional environment variables,
+  - `CHARSET`: the shell stdout charset.
