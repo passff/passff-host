@@ -114,10 +114,10 @@ echo "Installing $BROWSER_NAME host config"
 # Create config dir if not existing
 mkdir -p "$TARGET_DIR"
 
-PATH_ESC="$(echo $PATH | sed -e 's/@/\\@/g')"
-PASS_PATH_ESC="$(echo $PASS_PATH | sed -e 's/@/\\@/g')"
-HOST_FILE_PATH_ESC="$(echo $HOST_FILE_PATH | sed -e 's/@/\\@/g')"
-PYTHON3_PATH_ESC="$(echo $PYTHON3_PATH | sed -e 's/@/\\@/g')"
+PATH_ESC="$(echo "$PATH" | sed -e 's/@/\\@/g')"
+PASS_PATH_ESC="$(echo "$PASS_PATH" | sed -e 's/@/\\@/g')"
+HOST_FILE_PATH_ESC="$(echo "$HOST_FILE_PATH" | sed -e 's/@/\\@/g')"
+PYTHON3_PATH_ESC="$(echo "$PYTHON3_PATH" | sed -e 's/@/\\@/g')"
 
 # Replace path to python3 executable \
 # Replace path to pass (only in a line starting with "COMMAND =") \
