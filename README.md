@@ -22,10 +22,11 @@ This piece of software wraps around the **[zx2c4 pass](http://www.zx2c4.com/proj
 
 #### Linux, MacOS, * BSD
 
-Download the `install_host_app.sh` script from [our releases page](https://github.com/passff/passff-host/releases) and execute it. You can do this in one line like so:
+Download the latest `install_host_app.sh` script from [our releases page](https://github.com/passff/passff-host/releases) and execute it. You can do this in one line like so:
 
 ```
-$ curl -sSL https://github.com/passff/passff-host/releases/download/1.0.1/install_host_app.sh | bash -s -- [firefox|chrome|opera|chromium|vivaldi]
+$ VERSION=1.0.2
+$ curl -sSL https://github.com/passff/passff-host/releases/download/${VERSION}/install_host_app.sh | bash -s -- [firefox|chrome|opera|chromium|vivaldi]
 ```
 
 This script will download the host application (a small python script) and the add-on's manifest file (a JSON config file) and put them in the right place.
