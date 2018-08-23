@@ -52,7 +52,7 @@ $ make [VERSION=testing|...] [BROWSER=firefox|chrome|opera|chromium|vivaldi] ins
 
 This will generate the host application and installation scripts for the given `VERSION` (`testing` by default), and copy the host application and manifest files to the right place for your `BROWSER` (`firefox` by default).
 
-This uses the `--local` option of the the `install_host_app.sh` script, which instructs it to use the files on disk rather than downloading them from GitHub.
+This uses the `--local` option of the `install_host_app.sh` script, which instructs it to use the files on disk rather than downloading them from GitHub.
 
 If this doesn't work, you can link the files yourself. First, change the `path` value in the `passff.json` file to be the absolute path to the project's `bin/testing/passff.py` file. Then symlink (or copy) the file `bin/testing/passff.json` to the appropriate location for your browser and OS:
 
