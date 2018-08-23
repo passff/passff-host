@@ -44,16 +44,15 @@ Note: Older Windows versions might require powershell to be installed manually a
 #### Latest from GitHub
 This is not recommended! Only for developers and for testing purposes!
 
-Clone the repository. Then, from the project's `src/` directory, run `make` and execute the installation script in `bin/testing` for your desired browser (`firefox`, `chrome`, `opera`, `chromium`, or `vivaldi`):
+Clone the repository. Then, run the following command.
 
 ```
-$ cd ./src
-$ make
-$ cd ../bin/testing
-$ ./install_host_app.sh --local [firefox|chrome|opera|chromium|vivaldi]
+$ make [VERSION=testing|...] [BROWSER=firefox|chrome|opera|chromium|vivaldi] install
 ```
 
-This will copy the host application and manifest files to the right place for your browser. The `--local` option makes the script use the files on disk rather than downloading them from GitHub.
+This will generate the host application and installation scripts for the given `VERSION` (`testing` by default), and copy the host application and manifest files to the right place for your `BROWSER` (`firefox` by default).
+
+This uses the `--local` option of the the `install_host_app.sh` script, which instructs it to use the files on disk rather than downloading them from GitHub.
 
 If this doesn't work, you can link the files yourself. First, change the `path` value in the `passff.json` file to be the absolute path to the project's `bin/testing/passff.py` file. Then symlink (or copy) the file `bin/testing/passff.json` to the appropriate location for your browser and OS:
 
