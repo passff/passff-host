@@ -25,7 +25,7 @@ install: install-unix
 install-unix: $(HOST_TARGETS)
 	$(INSTALL_UNIX_TARGET) --local $(BROWSER)
 install-win: $(HOST_TARGETS)
-	$(INSTALL_UNIX_TARGET) --local $(BROWSER)
+	$(INSTALL_WIN_TARGET) --local $(BROWSER)
 
 %/.d:
 	mkdir -p $(@D)
