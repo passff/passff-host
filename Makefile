@@ -33,8 +33,8 @@ install-win: $(HOST_TARGETS)
 
 $(HOST_TARGETS): $(TARGET_DIR)/%: $(SRC_DIR)/% $(TARGET_DIR)/.d
 	sed -e "s/_VERSIONHOLDER_/$(VERSION)/g" < $(SRC_DIR)/$* > $@
-	# Make install script executable
-	echo $@ | grep -vq '.sh$$' || chmod a+x $@
+	# Make scripts executable
+	echo $@ | grep -vq '\(\.sh\|\.py\)$$' || chmod a+x $@
 
 clean:
 	rm -rf $(TARGET_DIR)
