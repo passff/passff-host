@@ -22,22 +22,23 @@ This piece of software wraps around the **[zx2c4 pass](http://www.zx2c4.com/proj
 
 #### Linux, MacOS, * BSD
 
-Download the latest `install_host_app.sh` script from [our releases page](https://github.com/passff/passff-host/releases) and execute it. You can do this in one line like so:
+Download the latest `install_host_app.sh` script from [our releases page](https://github.com/passff/passff-host/releases) and execute it. As an example, Firefox users can do this in one line like so:
 
 ```
 $ VERSION=1.0.2
-$ curl -sSL https://github.com/passff/passff-host/releases/download/${VERSION}/install_host_app.sh | bash -s -- [firefox|chrome|opera|chromium|vivaldi]
+$ curl -sSL https://github.com/passff/passff-host/releases/download/${VERSION}/install_host_app.sh | bash -s -- firefox
 ```
 
-This script will download the host application (a small python script) and the add-on's manifest file (a JSON config file) and put them in the right place.
+Users of other supported browsers need to replace the last argument (`firefox`) by `chrome`, `opera`, `chromium` or `vivaldi`.
+The script will download the host application (a small python script) and the add-on's manifest file (a JSON config file) and put them in the right place.
 If you're concerned about executing a script that downloads files from the web, you can download the files yourself and run the script with the `--local` option instead or link the files yourself. Details below.
 
 #### Windows
-Download the `install_host_app.bat` script from [our releases page](https://github.com/passff/passff-host/releases) and execute it from within a shell with a correct PATH.
+Download the `install_host_app.bat` script from [our releases page](https://github.com/passff/passff-host/releases) and execute it from within a shell with a correct PATH, mentioning your browser in the last argument (i.e., replace `firefox` by `chrome`, `opera`, `chromium` or `vivaldi` if necessary).
 *The rule of thumb is: if you can execute pass and python from your shell, then your host application will be installed correctly.*
 
 ```
-> install_host_app.bat [firefox|chrome|opera|chromium|vivaldi]
+> install_host_app.bat firefox
 ```
 
 Note: Older Windows versions might require powershell to be installed manually as the install script uses powershell internally. Windows 10 users should be fine out of the box.
@@ -45,13 +46,13 @@ Note: Older Windows versions might require powershell to be installed manually a
 #### Latest from GitHub
 This is not recommended! Only for developers and for testing purposes!
 
-Clone the repository. Then, from the project's `src/` directory, run `make` and execute the installation script in `bin/testing` for your desired browser (`firefox`, `chrome`, `opera`, `chromium`, or `vivaldi`):
+Clone the repository. Then, from the project's `src/` directory, run `make` and execute the installation script in `bin/testing` for your desired browser (i.e., replace `firefox` by `chrome`, `opera`, `chromium` or `vivaldi` if necessary):
 
 ```
 $ cd ./src
 $ make
 $ cd ../bin/testing
-$ ./install_host_app.sh --local [firefox|chrome|opera|chromium|vivaldi]
+$ ./install_host_app.sh --local firefox
 ```
 
 This will copy the host application and manifest files to the right place for your browser. The `--local` option makes the script use the files on disk rather than downloading them from GitHub.
