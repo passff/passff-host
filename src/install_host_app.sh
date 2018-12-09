@@ -43,6 +43,9 @@ fi
 usage() {
   echo "Usage: $0 [OPTION] [chrome|chromium|firefox|opera|vivaldi]
 
+  Example:
+    $0 firefox   # Install host app for Mozilla Firefox
+
   Options:
     -l, --local    Install files from disk instead of downloading them
     -h, --help     Show this message"
