@@ -146,6 +146,12 @@ In the preferences of PassFF, you can enable the status bar and debug logs in th
 * The typical output for an empty store is:
   * `{"stderr": "", "version": "1.0.1", "exitCode": 0, "stdout": "Password Store\n"}`
 
+#### Testing OTP support
+```console
+$ echo -e "\x19\x00\x00\x00[\"otp\",\"/www/github.com\"]" | /path/to/passff.py | tail -c +4; echo
+{"exitCode": 0, "stderr": "", "stdout": "123456\n", "version": "1.0.1"}
+```
+
 ### Preferences
 If you use a customized `pass` installation: environment variables, customized repository path or extensions, you may have to customize the *preferences section* in `passff.py`.
 
