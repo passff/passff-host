@@ -1,27 +1,32 @@
 #!/usr/bin/env python3
-
 """
     Host application of the browser extension PassFF
     that wraps around the zx2c4 pass script.
 """
 
-import os, sys, json, struct, subprocess
+import json
+import os
+import struct
+import subprocess
+import sys
 
 VERSION = "_VERSIONHOLDER_"
 
-################################################################################
-######################## Begin preferences section #############################
-################################################################################
-COMMAND      = "pass"
+###############################################################################
+######################## Begin preferences section ############################
+###############################################################################
+COMMAND = "pass"
 COMMAND_ARGS = []
-COMMAND_ENV  = {
+COMMAND_ENV = {
     "TREE_CHARSET": "ISO-8859-1",
     "PATH": "/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin",
 }
-CHARSET      = "UTF-8"
-################################################################################
-######################### End preferences section ##############################
-################################################################################
+CHARSET = "UTF-8"
+
+###############################################################################
+######################### End preferences section #############################
+###############################################################################
+
 
 def getMessage():
     """ Read a message from stdin and decode it. """
@@ -32,17 +37,20 @@ def getMessage():
     message = sys.stdin.buffer.read(messageLength).decode("utf-8")
     return json.loads(message)
 
+
 def encodeMessage(messageContent):
     """ Encode a message for transmission, given its content. """
     encodedContent = json.dumps(messageContent)
     encodedLength = struct.pack('@I', len(encodedContent))
     return {'length': encodedLength, 'content': encodedContent}
 
+
 def sendMessage(encodedMessage):
     """ Send an encoded message to stdout. """
     sys.stdout.buffer.write(encodedMessage['length'])
     sys.stdout.write(encodedMessage['content'])
     sys.stdout.flush()
+
 
 if __name__ == "__main__":
     # Read message from standard input
@@ -94,9 +102,10 @@ if __name__ == "__main__":
     proc = subprocess.run(cmd, **proc_params)
 
     # Send response
-    sendMessage(encodeMessage({
-        "exitCode": proc.returncode,
-        "stdout": proc.stdout.decode(CHARSET),
-        "stderr": proc.stderr.decode(CHARSET),
-        "version": VERSION
-    }))
+    sendMessage(
+        encodeMessage({
+            "exitCode": proc.returncode,
+            "stdout": proc.stdout.decode(CHARSET),
+            "stderr": proc.stderr.decode(CHARSET),
+            "version": VERSION
+        }))
