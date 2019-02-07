@@ -52,17 +52,23 @@ if __name__ == "__main__":
     std_input = None
 
     if len(receivedMessage) == 0:
-        pass
+        opt_args = ["show"]
     elif receivedMessage[0] == "insert":
         opt_args = ["insert", "-m"]
         pos_args = [receivedMessage[1]]
         std_input = receivedMessage[2]
     elif receivedMessage[0] == "generate":
-        pos_args = [receivedMessage[1], receivedMessage[2]]
         opt_args = ["generate"]
+        pos_args = [receivedMessage[1], receivedMessage[2]]
         if "-n" in receivedMessage[3:]:
             opt_args.append("-n")
+    elif receivedMessage[0] == "otp" and len(receivedMessage) == 2:
+        opt_args = ["otp"]
+        key = receivedMessage[1]
+        key = "/" + (key[1:] if key[0] == "/" else key)
+        pos_args = [key]
     else:
+        opt_args = ["show"]
         key = receivedMessage[0]
         key = "/" + (key[1:] if key[0] == "/" else key)
         pos_args = [key]

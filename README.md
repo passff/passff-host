@@ -22,21 +22,23 @@ This piece of software wraps around the **[zx2c4 pass](http://www.zx2c4.com/proj
 
 #### Linux, MacOS, * BSD
 
-Download the `install_host_app.sh` script from [our releases page](https://github.com/passff/passff-host/releases) and execute it. You can do this in one line like so:
+Download the latest `install_host_app.sh` script from [our releases page](https://github.com/passff/passff-host/releases) and execute it. As an example, Firefox users can do this in one line like so:
 
 ```
-$ curl -sSL https://github.com/passff/passff-host/releases/download/1.0.1/install_host_app.sh | bash -s -- [firefox|chrome|opera|chromium|vivaldi]
+$ VERSION=1.0.2
+$ curl -sSL https://github.com/passff/passff-host/releases/download/${VERSION}/install_host_app.sh | bash -s -- firefox
 ```
 
-This script will download the host application (a small python script) and the add-on's manifest file (a JSON config file) and put them in the right place.
+Users of other supported browsers need to replace the last argument (`firefox`) by `chrome`, `opera`, `chromium` or `vivaldi`.
+The script will download the host application (a small python script) and the add-on's manifest file (a JSON config file) and put them in the right place.
 If you're concerned about executing a script that downloads files from the web, you can download the files yourself and run the script with the `--local` option instead or link the files yourself. Details below.
 
 #### Windows
-Download the `install_host_app.bat` script from [our releases page](https://github.com/passff/passff-host/releases) and execute it from within a shell with a correct PATH.
+Download the `install_host_app.bat` script from [our releases page](https://github.com/passff/passff-host/releases) and execute it from within a shell with a correct PATH, mentioning your browser in the last argument (i.e., replace `firefox` by `chrome`, `opera`, `chromium` or `vivaldi` if necessary).
 *The rule of thumb is: if you can execute pass and python from your shell, then your host application will be installed correctly.*
 
 ```
-> install_host_app.bat [firefox|chrome|opera|chromium|vivaldi]
+> install_host_app.bat firefox
 ```
 
 Note: Older Windows versions might require powershell to be installed manually as the install script uses powershell internally. Windows 10 users should be fine out of the box.
@@ -142,6 +144,12 @@ In the preferences of PassFF, you can enable the status bar and debug logs in th
 * Run `echo -e "\x02\x00\x00\x00[]" | /path/to/passff.py | tail -c +4; echo`
 * The typical output for an empty store is:
   * `{"stderr": "", "version": "1.0.1", "exitCode": 0, "stdout": "Password Store\n"}`
+
+#### Testing OTP support
+```console
+$ echo -e "\x19\x00\x00\x00[\"otp\",\"/www/github.com\"]" | /path/to/passff.py | tail -c +4; echo
+{"exitCode": 0, "stderr": "", "stdout": "123456\n", "version": "1.0.1"}
+```
 
 ### Preferences
 If you use a customized `pass` installation: environment variables, customized repository path or extensions, you may have to customize the *preferences section* in `passff.py`.
