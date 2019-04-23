@@ -11,7 +11,7 @@ This piece of software wraps around the **[zx2c4 pass](http://www.zx2c4.com/proj
 ### Dependencies
 
 #### For the host application
-* [`python3`](https://docs.python.org/3.5/) (>= 3.5)
+* [`python3`](https://docs.python.org/3.6/) (>= 3.6)
 * [`pass`](https://www.passwordstore.org/)
 
 #### For the install script (except Windows)
