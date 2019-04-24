@@ -73,7 +73,7 @@ if __name__ == "__main__":
     elif receivedMessage[0] == "grepMetaUrls" and len(receivedMessage) == 2:
         opt_args = ["grep", "-iE"]
         url_field_names = receivedMessage[1]
-        pos_args = [f"^({'|'.join(url_field_names)}):"]
+        pos_args = ["^({}):".format('|'.join(url_field_names))]
     elif receivedMessage[0] == "otp" and len(receivedMessage) == 2:
         opt_args = ["otp"]
         key = receivedMessage[1]
