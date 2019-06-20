@@ -109,7 +109,7 @@ if __name__ == "__main__":
     sendMessage(
         encodeMessage({
             "exitCode": proc.returncode,
-            "stdout": proc.stdout.decode(CHARSET),
-            "stderr": proc.stderr.decode(CHARSET),
+            "stdout": proc.stdout.decode(CHARSET, 'ignore'),
+            "stderr": proc.stderr.decode(CHARSET, 'ignore'),
             "version": VERSION
         }))
