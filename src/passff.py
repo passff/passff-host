@@ -61,6 +61,7 @@ if __name__ == "__main__":
 
     if len(receivedMessage) == 0:
         opt_args = ["show"]
+        pos_args = ["/"]
     elif receivedMessage[0] == "insert":
         opt_args = ["insert", "-m"]
         pos_args = [receivedMessage[1]]
