@@ -32,16 +32,18 @@ else
     TARGET_DIR_CHROMIUM="/etc/chromium/native-messaging-hosts"
     TARGET_DIR_FIREFOX="/usr/lib/mozilla/native-messaging-hosts"
     TARGET_DIR_VIVALDI="/etc/vivaldi/native-messaging-hosts"
+    TARGET_DIR_LIBREWOLF="/usr/lib/librewolf/native-messaging-hosts"
   else
     TARGET_DIR_CHROME="$HOME/.config/google-chrome/NativeMessagingHosts"
     TARGET_DIR_CHROMIUM="$HOME/.config/chromium/NativeMessagingHosts"
     TARGET_DIR_FIREFOX="$HOME/.mozilla/native-messaging-hosts"
     TARGET_DIR_VIVALDI="$HOME/.config/vivaldi/NativeMessagingHosts"
+    TARGET_DIR_LIBREWOLF="$HOME/.librewolf/native-messaging-hosts"
   fi
 fi
 
 usage() {
-  echo "Usage: $0 [OPTION] [chrome|chromium|firefox|opera|vivaldi]
+  echo "Usage: $0 [OPTION] [chrome|chromium|firefox|opera|vivaldi|librewolf]
 
   Example:
     $0 firefox   # Install host app for Mozilla Firefox
@@ -64,6 +66,10 @@ while [ $# -gt 0 ]; do
     firefox)
       BROWSER_NAME="Firefox"
       TARGET_DIR="$TARGET_DIR_FIREFOX"
+      ;;
+    librewolf)
+      BROWSER_NAME="Librewolf"
+      TARGET_DIR="$TARGET_DIR_LIBREWOLF"
       ;;
     opera)
       BROWSER_NAME="Opera"
