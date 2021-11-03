@@ -20,11 +20,13 @@ if [ "$KERNEL_NAME" = 'Darwin' ]; then
     TARGET_DIR_CHROMIUM="/Library/Application Support/Chromium/NativeMessagingHosts"
     TARGET_DIR_FIREFOX="/Library/Application Support/Mozilla/NativeMessagingHosts"
     TARGET_DIR_VIVALDI="/Library/Application Support/Vivaldi/NativeMessagingHosts"
+    TARGET_DIR_LIBREWOLF="/Library/Application Support/LibreWolf/NativeMessagingHosts"
   else
     TARGET_DIR_CHROME="$HOME/Library/Application Support/Google/Chrome/NativeMessagingHosts"
     TARGET_DIR_CHROMIUM="$HOME/Library/Application Support/Chromium/NativeMessagingHosts"
     TARGET_DIR_FIREFOX="$HOME/Library/Application Support/Mozilla/NativeMessagingHosts"
     TARGET_DIR_VIVALDI="$HOME/Library/Application Support/Vivaldi/NativeMessagingHosts"
+    TARGET_DIR_LIBREWOLF="$HOME/Library/Application Support/LibreWolf/NativeMessagingHosts"
   fi
 else
   if [ "$(whoami)" = "root" ]; then
@@ -32,16 +34,18 @@ else
     TARGET_DIR_CHROMIUM="/etc/chromium/native-messaging-hosts"
     TARGET_DIR_FIREFOX="/usr/lib/mozilla/native-messaging-hosts"
     TARGET_DIR_VIVALDI="/etc/vivaldi/native-messaging-hosts"
+    TARGET_DIR_LIBREWOLF="/usr/lib/librewolf/native-messaging-hosts"
   else
     TARGET_DIR_CHROME="$HOME/.config/google-chrome/NativeMessagingHosts"
     TARGET_DIR_CHROMIUM="$HOME/.config/chromium/NativeMessagingHosts"
     TARGET_DIR_FIREFOX="$HOME/.mozilla/native-messaging-hosts"
     TARGET_DIR_VIVALDI="$HOME/.config/vivaldi/NativeMessagingHosts"
+    TARGET_DIR_LIBREWOLF="$HOME/.librewolf/native-messaging-hosts"
   fi
 fi
 
 usage() {
-  echo "Usage: $0 [OPTION] [chrome|chromium|firefox|opera|vivaldi]
+  echo "Usage: $0 [OPTION] [chrome|chromium|firefox|opera|vivaldi|librewolf]
 
   Example:
     $0 firefox   # Install host app for Mozilla Firefox
@@ -64,6 +68,10 @@ while [ $# -gt 0 ]; do
     firefox)
       BROWSER_NAME="Firefox"
       TARGET_DIR="$TARGET_DIR_FIREFOX"
+      ;;
+    librewolf)
+      BROWSER_NAME="Librewolf"
+      TARGET_DIR="$TARGET_DIR_LIBREWOLF"
       ;;
     opera)
       BROWSER_NAME="Opera"

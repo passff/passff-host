@@ -34,6 +34,9 @@ IF NOT "%1"=="" (
     ) ELSE IF "%1"=="firefox" (
         SET "TARGET_REG=HKCU\SOFTWARE\Mozilla\NativeMessagingHosts\%APP_NAME%"
         SHIFT
+    ) ELSE IF "%1"=="librewolf" (
+        SET "TARGET_REG=HKCU\SOFTWARE\LibreWolf\NativeMessagingHosts\%APP_NAME%"
+        SHIFT
     ) ELSE IF "%1"=="chrome"  (
         SET "TARGET_REG=HKCU\Software\Google\Chrome\NativeMessagingHosts\%APP_NAME%"
         SHIFT
@@ -101,7 +104,7 @@ REG ADD "%TARGET_REG%" /ve /d "%HOST_MANIFEST_FULL%" /f || (
 EXIT /B
 
 :help
-ECHO Usage: %0 [OPTION] [chrome^|chromium^|firefox^|opera^|vivaldi]
+ECHO Usage: %0 [OPTION] [chrome^|chromium^|firefox^|opera^|vivaldi^|librewolf]
 ECHO
 ECHO Options:
 ECHO   --local    Install files from disk instead of downloading them
