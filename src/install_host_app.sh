@@ -20,13 +20,13 @@ if [ "$KERNEL_NAME" = 'Darwin' ]; then
     TARGET_DIR_CHROMIUM="/Library/Application Support/Chromium/NativeMessagingHosts"
     TARGET_DIR_FIREFOX="/Library/Application Support/Mozilla/NativeMessagingHosts"
     TARGET_DIR_VIVALDI="/Library/Application Support/Vivaldi/NativeMessagingHosts"
-    TARGET_DIR_FIREFOX="/Library/Application Support/LibreWolf/NativeMessagingHosts"
+    TARGET_DIR_LIBREWOLF="/Library/Application Support/LibreWolf/NativeMessagingHosts"
   else
     TARGET_DIR_CHROME="$HOME/Library/Application Support/Google/Chrome/NativeMessagingHosts"
     TARGET_DIR_CHROMIUM="$HOME/Library/Application Support/Chromium/NativeMessagingHosts"
     TARGET_DIR_FIREFOX="$HOME/Library/Application Support/Mozilla/NativeMessagingHosts"
     TARGET_DIR_VIVALDI="$HOME/Library/Application Support/Vivaldi/NativeMessagingHosts"
-    TARGET_DIR_FIREFOX="$HOME/Library/Application Support/LibreWolf/NativeMessagingHosts"
+    TARGET_DIR_LIBREWOLF="$HOME/Library/Application Support/LibreWolf/NativeMessagingHosts"
   fi
 else
   if [ "$(whoami)" = "root" ]; then
