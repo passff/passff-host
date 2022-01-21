@@ -24,8 +24,8 @@ This piece of software wraps around the **[zx2c4 pass](http://www.zx2c4.com/proj
 
 Download the latest `install_host_app.sh` script from [our releases page](https://github.com/passff/passff-host/releases) and execute it. As an example, Firefox users can do this in one line like so:
 
-```
-$ curl -sSL github.com/passff/passff-host/releases/latest/download/install_host_app.sh | bash -s -- firefox
+```bash
+curl -sSL github.com/passff/passff-host/releases/latest/download/install_host_app.sh | bash -s -- firefox
 ```
 
 Users of other supported browsers need to replace the last argument (`firefox`) by `chrome`, `opera`, `chromium` or `vivaldi`.
@@ -37,7 +37,7 @@ Download the `install_host_app.bat` script from [our releases page](https://gith
 *The rule of thumb is: if you can execute pass and python from your shell, then your host application will be installed correctly.*
 
 ```
-> install_host_app.bat firefox
+install_host_app.bat firefox
 ```
 
 Note: Older Windows versions might require powershell to be installed manually as the install script uses powershell internally. Windows 10 users should be fine out of the box.
@@ -47,8 +47,8 @@ This is not recommended! Only for developers and for testing purposes!
 
 Clone the repository. Then, run the following command.
 
-```
-$ make [VERSION=testing|...] [BROWSER=firefox|chrome|opera|chromium|vivaldi] install
+```bash
+make [VERSION=testing|...] [BROWSER=firefox|chrome|opera|chromium|vivaldi] install
 ```
 
 This will generate the host application and installation scripts for the given `VERSION` (`testing` by default), and copy the host application and manifest files to the right place for your `BROWSER` (`firefox` by default).
@@ -125,7 +125,7 @@ See the section above.
 
 ###### Set a correct PATH in the `passff.py` script
 When the PATH variable is not set correctly, `pass` will complain about not finding `getopt` and then loop forever. You can reproduce this behavior on the command line:
-```
+```bash
 PATH="$(which bash | xargs dirname)" $(which pass)
 ```
 
