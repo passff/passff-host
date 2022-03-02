@@ -28,12 +28,12 @@ Download the latest `install_host_app.sh` script from [our releases page](https:
 curl -sSL github.com/passff/passff-host/releases/latest/download/install_host_app.sh | bash -s -- firefox
 ```
 
-Users of other supported browsers need to replace the last argument (`firefox`) by `chrome`, `opera`, `chromium` or `vivaldi`.
+Users of other supported browsers need to replace the last argument (`firefox`) by `librewolf`, `chrome`, `opera`, `chromium` or `vivaldi`.
 The script will download the host application (a small python script) and the add-on's manifest file (a JSON config file) and put them in the right place.
 If you're concerned about executing a script that downloads files from the web, you can download the files yourself and run the script with the `--local` option instead or link the files yourself. Details below.
 
 #### Windows
-Download the `install_host_app.bat` script from [our releases page](https://github.com/passff/passff-host/releases) and execute it from within a shell with a correct PATH, mentioning your browser in the last argument (i.e., replace `firefox` by `chrome`, `opera`, `chromium` or `vivaldi` if necessary).
+Download the `install_host_app.bat` script from [our releases page](https://github.com/passff/passff-host/releases) and execute it from within a shell with a correct PATH, mentioning your browser in the last argument (i.e., replace `firefox` by `librewolf`, `chrome`, `opera`, `chromium` or `vivaldi` if necessary).
 *The rule of thumb is: if you can execute pass and python from your shell, then your host application will be installed correctly.*
 
 ```
@@ -48,7 +48,7 @@ This is not recommended! Only for developers and for testing purposes!
 Clone the repository. Then, run the following command.
 
 ```bash
-make [VERSION=testing|...] [BROWSER=firefox|chrome|opera|chromium|vivaldi] install
+make [VERSION=testing|...] [BROWSER=firefox|librewolf|chrome|opera|chromium|vivaldi] install
 ```
 
 This will generate the host application and installation scripts for the given `VERSION` (`testing` by default), and copy the host application and manifest files to the right place for your `BROWSER` (`firefox` by default).
@@ -67,6 +67,16 @@ If this doesn't work, you can link the files yourself. First, change the `path` 
   - Windows
     - Per-user: `Path contained in registry key HKEY_CURRENT_USER\Software\Mozilla\NativeMessagingHosts\passff`
     - System-wide: `Path contained in registry key HKEY_LOCAL_MACHINE\SOFTWARE\Mozilla\NativeMessagingHosts\passff`
+- LibreWolf
+  - Linux
+    - Per-user: `~/.librewolf/native-messaging-hosts/passff.json`
+    - System-wide: `/usr/{lib,lib64,share}/librewolf/native-messaging-hosts/passff.json`
+  - OS X
+    - Per-user: `~/Library/Application Support/LibreWolf/NativeMessagingHosts/passff.json`
+    - System-wide: `/Library/Application Support/LibreWolf/NativeMessagingHosts/passff.json`
+  - Windows
+    - Per-user: `Path contained in registry key HKEY_CURRENT_USER\Software\LibreWolf\NativeMessagingHosts\passff`
+    - System-wide: `Path contained in registry key HKEY_LOCAL_MACHINE\SOFTWARE\LibreWolf\NativeMessagingHosts\passff`
 - Chrome
   - Linux
     - Per-user: `~/.config/google-chrome/NativeMessagingHosts/passff.json`
