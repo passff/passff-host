@@ -154,6 +154,19 @@ In the preferences of PassFF, you can enable the status bar and debug logs in th
 * The typical output for an empty store is:
   * `{"stderr": "", "version": "1.0.1", "exitCode": 0, "stdout": "Password Store\n"}`
 
+#### Check the error code on failure
+```console
+$ strace -f --trace=execve --string-limit=256 firefox 2>&1 |grep passff
+[pid 73124] execve("/home/<USER>/.mozilla/native-messaging-hosts/passff.py", ["/home/<USER>/.mozilla/native-messaging-hosts/passff.py", "/home/<USER>/.mozilla/native-messaging-hosts/passff.json", "passff@invicem.pro"], 0x7fce6a83e500 /* 77 vars */) = -1 EACCES (Permission denied)
+```
+
+#### Check the security module configuration
+If your browser is confined by a security module such as AppArmor, then its policies might deny the execution of the host application, resulting in syslog entries like this:
+```console
+$ grep passff /var/log/syslog
+Apr 22 19:55:24 <HOST> kernel: [70746.170024] audit: type=1400 audit(1650650124.793:2258): apparmor="DENIED" operation="exec" profile="firefox" name="/home/<USER>/.mozilla/native-messaging-hosts/passff.py" pid=73124 comm=444F4D20576F726B6572 requested_mask="x" denied_mask="x" fsuid=1000 ouid=1000
+```
+
 #### Testing OTP support
 ```console
 $ echo -e "\x19\x00\x00\x00[\"otp\",\"/www/github.com\"]" | /path/to/passff.py | tail -c +4; echo
