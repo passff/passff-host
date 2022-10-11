@@ -28,6 +28,11 @@ CHARSET = "UTF-8"
 ###############################################################################
 
 
+COMMAND_ENV["PATH"] = ":".join(
+    os.path.expanduser(p) for p in COMMAND_ENV["PATH"].split(":")
+)
+
+
 def getMessage():
     """ Read a message from stdin and decode it. """
     rawLength = sys.stdin.buffer.read(4)

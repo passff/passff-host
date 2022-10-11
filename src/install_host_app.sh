@@ -106,7 +106,8 @@ fi
 
 PASS_PATH="$(which pass)"
 if [ -x "$PASS_PATH" ]; then
-  echo "Pass executable located at $PASS_PATH"
+  echo -n "Pass executable located at "
+  echo "$PASS_PATH" | sed -e "s@$HOME@~@g"
 else
   echo "Pass executable not found, but Pass is required for PassFF to work!"
   exit 1
@@ -125,8 +126,8 @@ echo "Installing $BROWSER_NAME host config"
 # Create config dir if not existing
 mkdir -p "$TARGET_DIR"
 
-
 PATH_ESC="$(echo "$PATH" | sed -e 's/@/\\@/g')"
+PATH_HOMED="$(echo "$PATH_ESC" | sed -e "s@$HOME@~@g")"
 HOST_FILE_PATH_ESC="$(echo "$HOST_FILE_PATH" | sed -e 's/@/\\@/g')"
 PYTHON3_PATH_ESC="$(echo "$PYTHON3_PATH" | sed -e 's/@/\\@/g')"
 
@@ -134,7 +135,7 @@ PYTHON3_PATH_ESC="$(echo "$PYTHON3_PATH" | sed -e 's/@/\\@/g')"
 # Set the PATH to match this script's \
 HOST_SED=" \
 1 s@.*@#!${PYTHON3_PATH_ESC}@; \
-s@\"PATH\":.*@\"PATH\": \"$PATH_ESC\"@; \
+s@\"PATH\":.*@\"PATH\": \"$PATH_HOMED\"@; \
 "
 # Replace path to host \
 MANIFEST_SED=" \
