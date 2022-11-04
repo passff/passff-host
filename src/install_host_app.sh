@@ -96,16 +96,16 @@ while [ $# -gt 0 ]; do
   shift
 done
 
-PYTHON3_PATH="$(which python3)"
-if [ -x "$PYTHON3_PATH" ]; then
-  echo "Python 3 executable located at $PYTHON3_PATH"
+if which python3 >/dev/null 2>&1; then
+  PYTHON3_PATH="$(which python3)"
+    echo "Python 3 executable located at $PYTHON3_PATH"
 else
   echo "Python 3 executable not found, but Python 3 is required for PassFF to work!"
   exit 1
 fi
 
-PASS_PATH="$(which pass)"
-if [ -x "$PASS_PATH" ]; then
+if which pass >/dev/null 2>&1; then
+  PASS_PATH="$(which pass)"
   echo "Pass executable located at $PASS_PATH"
 else
   echo "Pass executable not found, but Pass is required for PassFF to work!"
