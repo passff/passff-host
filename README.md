@@ -14,6 +14,8 @@ This piece of software wraps around the **[zx2c4 pass](http://www.zx2c4.com/proj
 * [`python3`](https://docs.python.org/3.5/) (>= 3.5)
 * [`pass`](https://www.passwordstore.org/)
 
+In most cases, a **graphical *pinentry* program** is also needed for use with the PassFF browser extension. For that, please refer to the instructions given in the [PassFF repository](https://github.com/passff/passff#a-graphical-pinentry-program).
+
 #### For the install script (except Windows)
 * `curl`
 * `sed`
