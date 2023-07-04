@@ -6,6 +6,8 @@
 
 import json
 import os
+import re
+import shlex
 import struct
 import subprocess
 import sys
@@ -52,6 +54,50 @@ def sendMessage(encodedMessage):
     sys.stdout.flush()
 
 
+def setFlags(env, flags):
+    opts = env.get('PASSWORD_STORE_GPG_OPTS', '')
+    for flag, value in flags.items():
+        if value:
+            value = '=' + shlex.quote(value)
+        # If the user's environment sets this opt, remove theirs to add ours.
+        opts = '--%s%s %s' % (
+            flag,
+            value,
+            re.sub(r'--%s(?:=|\s+)\S*' % flag, '', opts)
+        )
+    env['PASSWORD_STORE_GPG_OPTS'] = opts.strip()
+
+
+ERROR_CODE_PAT = r'(?:ERROR pkdecrypt_failed) (\d+)'
+GPG_STATUS_PAT = r'\[GNUPG:\](.*)'
+BEGIN_DECRYPTION = 'BEGIN_DECRYPTION'
+END_DECRYPTION = 'END_DECRYPTION'
+NO_SECKEY = 'NO_SECKEY'
+
+
+def cleanStderr(stderr):
+    preserve = []
+    # https://github.com/gpg/libgpg-error/blob/master/src/err-codes.h.in
+    error_code = 0
+    for line in stderr.split("\n"):
+        if re.match(GPG_STATUS_PAT, line):
+            m = re.search(ERROR_CODE_PAT, line)
+            if m:
+                error_code = int(m.group(1)) & 0xFFFF
+            elif NO_SECKEY in line:
+                error_code = 17
+            elif BEGIN_DECRYPTION in line:
+                preserve[:-1] = []
+            elif END_DECRYPTION in line:
+                break
+        elif preserve and line.startswith('  '):
+            # gpg indented line continuation
+            preserve[-1] += '\n' + line
+        else:
+            preserve.append(line)
+    return '\n'.join(preserve), error_code
+
+
 if __name__ == "__main__":
     # Read message from standard input
     receivedMessage = getMessage()
@@ -93,6 +139,7 @@ if __name__ == "__main__":
         env["HOME"] = os.path.expanduser('~')
     for key, val in COMMAND_ENV.items():
         env[key] = val
+    setFlags(env, {'status-fd': '2', 'debug': 'crypto'})
 
     # Set up subprocess params
     cmd = [COMMAND] + opt_args + ['--'] + pos_args
@@ -107,10 +154,12 @@ if __name__ == "__main__":
     proc = subprocess.run(cmd, **proc_params)
 
     # Send response
+    stderr, error_code = cleanStderr(proc.stderr.decode(CHARSET))
     sendMessage(
         encodeMessage({
             "exitCode": proc.returncode,
             "stdout": proc.stdout.decode(CHARSET),
-            "stderr": proc.stderr.decode(CHARSET),
+            "stderr": stderr,
+            "errorCode": error_code,
             "version": VERSION
         }))
