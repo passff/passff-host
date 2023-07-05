@@ -75,30 +75,24 @@ def setPassGpgOpts(env, opts_dict):
 def getGpgCodesFromStderr(stderr):
     preserve = []
     # https://github.com/gpg/libgpg-error/blob/master/src/err-codes.h.in
-    error_code = 0
+    gpg_error_code = 0
     for line in stderr.split("\n"):
-        m = re.search(r'gpg: DBG: chan_\d+ (?:<-|->) ERR (\d+)', line)
-        if m is not None:
-            error_code = int(m.group(1)) & 0xFFFF
+        if line.startswith('gpg: DBG:'):
+            m = re.search(r'chan_\d+ (?:<-|->) ERR (\d+)', line)
+            if m is not None:
+                error_code = int(m.group(1)) & 0xFFFF
         elif line.startswith("[GNUPG:]"):
             m = re.search(r'ERROR pkdecrypt_failed (\d+)', line)
             if m is not None:
                 error_code = int(m.group(1)) & 0xFFFF
             elif 'NO_SECKEY' in line:
                 error_code = 17
-            elif 'ENC_TO' in line:
-                preserve.clear()
-            elif 'BEGIN_DECRYPTION' in line:
-                preserve = preserve[-1:]
-            elif 'END_DECRYPTION' in line:
-                break
         elif len(preserve) > 0 and line.startswith('  '):
             # gpg indented line continuation
             preserve[-1] += '\n' + line
-        elif not line.startswith('gpg: DBG:'):
+        else:
             preserve.append(line)
-    # Filter out any gpg: DBG: messages that might've slipped through.
-    return '\n'.join(preserve), error_code
+    return '\n'.join(preserve), gpg_error_code
 
 
 if __name__ == "__main__":
@@ -158,12 +152,12 @@ if __name__ == "__main__":
 
     # Send response
     decoded_stderr = proc.stderr.decode(CHARSET)
-    stderr, error_code = getGpgCodesFromStderr(decoded_stderr)
+    stderr, gpg_error_code = getGpgCodesFromStderr(decoded_stderr)
     sendMessage(
         encodeMessage({
             "exitCode": proc.returncode,
             "stdout": proc.stdout.decode(CHARSET),
             "stderr": stderr,
-            "errorCode": error_code,
+            "gpgErrorCode": gpg_error_code,
             "version": VERSION
         }))
