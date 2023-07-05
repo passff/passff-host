@@ -73,33 +73,38 @@ def setPassGpgOpts(env, opts_dict):
 
 
 def getGpgCodesFromStderr(stderr):
-    preserve = []
+    messages = []
+    for line in stderr.split("\n"):
+        # append gpg indented line continuation to previous message
+        if len(messages) > 0 and line.startswith('  '):
+            messages[-1] += f"\n{line}"
+        else:
+            messages.append(line)
+
+    # extract GPG error codes from status and debug messages
     # https://github.com/gpg/libgpg-error/blob/master/src/err-codes.h.in
     gpg_error_code = 0
-    for line in stderr.split("\n"):
-        if line.startswith('gpg: DBG:'):
-            m = re.search(r'chan_\d+ (?:<-|->) ERR (\d+)', line)
+    for msg in messages:
+        if msg.startswith('gpg: DBG:'):
+            m = re.search(r'chan_\d+ (?:<-|->) ERR (\d+)', msg)
             if m is not None:
                 gpg_error_code = int(m.group(1)) & 0xFFFF
-        elif line.startswith("[GNUPG:]"):
-            m = re.search(r'ERROR pkdecrypt_failed (\d+)', line)
+        elif msg.startswith("[GNUPG:]"):
+            m = re.search(r'ERROR pkdecrypt_failed (\d+)', msg)
             if m is not None:
                 gpg_error_code = int(m.group(1)) & 0xFFFF
             elif 'NO_SECKEY' in line:
                 gpg_error_code = 17
-        elif len(preserve) > 0 and line.startswith('  '):
-            # append gpg indented line continuation to previous entry
-            preserve[-1] += f"\n{line}"
-        preserve.append(line)
+
     # filter out debug and status outputs
-    # (including indented line continuations)
-    preserve = [
-        line for line in preserve if not (
-            line.startswith("gpg: DBG:")
-            or line.startswith("[GNUPG:]")
+    stderr_filtered = '\n'.join([
+        msg for msg in messages if not (
+            msg.startswith("gpg: DBG:")
+            or msg.startswith("[GNUPG:]")
         )
-    ]
-    return '\n'.join(preserve), gpg_error_code
+    ])
+    
+    return stderr_filtered, gpg_error_code
 
 
 if __name__ == "__main__":
