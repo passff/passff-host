@@ -54,59 +54,47 @@ def sendMessage(encodedMessage):
     sys.stdout.flush()
 
 
-def setFlags(env, flags):
+def setPassGpgOpts(env, opts_dict):
+    """ Add arguments to PASSWORD_STORE_GPG_OPTS. """
     opts = env.get('PASSWORD_STORE_GPG_OPTS', '')
-    for flag, value in flags.items():
-        if value:
-            value = '=' + shlex.quote(value)
-        # If the user's environment sets this opt, remove theirs to add ours.
-        opts = '--%s%s %s' % (
-            flag,
-            value,
-            re.sub(r'--%s(?:(?:=|\s+)\S*)?' % flag, '', opts)
-        )
+    for opt, value in opts_dict.items():
+        re_opt = f"--{opt}"
+        if value is not None:
+            value = f"={shlex.quote(value)}"
+            re_opt = rf"--{opt}(?:=|\s+)\S*"
+        # If the user's environment sets this opt, remove it.
+        opts = re.sub(re_opt, '', opts)
+        opts = f"--{opt}{value} {opts}"
     env['PASSWORD_STORE_GPG_OPTS'] = opts.strip()
 
 
-ERROR_CODE_PAT = r'(?:ERROR pkdecrypt_failed) (\d+)'
-CHAN_ERROR_PAT = r'gpg: DBG: chan_\d+ (?:<-|->) ERR (\d+)'
-GPG_STATUS_PAT = r'\[GNUPG:\](.*)'
-ENC_TO = 'ENC_TO'
-BEGIN_DECRYPTION = 'BEGIN_DECRYPTION'
-END_DECRYPTION = 'END_DECRYPTION'
-NO_SECKEY = 'NO_SECKEY'
-
-
-def cleanStderr(stderr):
+def getGpgCodesFromStderr(stderr):
     preserve = []
     # https://github.com/gpg/libgpg-error/blob/master/src/err-codes.h.in
     error_code = 0
     for line in stderr.split("\n"):
-        m = re.search(CHAN_ERROR_PAT, line)
-        if m:
+        m = re.search(r'gpg: DBG: chan_\d+ (?:<-|->) ERR (\d+)', line)
+        if m is not None:
             error_code = int(m.group(1)) & 0xFFFF
-        elif re.match(GPG_STATUS_PAT, line):
-            m = re.search(ERROR_CODE_PAT, line)
-            if m:
+        elif line.startswith("[GNUPG:]"):
+            m = re.search(r'ERROR pkdecrypt_failed (\d+)', line)
+            if m is not None:
                 error_code = int(m.group(1)) & 0xFFFF
-            elif NO_SECKEY in line:
+            elif 'NO_SECKEY' in line:
                 error_code = 17
-            elif ENC_TO in line:
+            elif 'ENC_TO' in line:
                 preserve.clear()
-            elif BEGIN_DECRYPTION in line:
-                preserve[:-1] = []
-            elif END_DECRYPTION in line:
+            elif 'BEGIN_DECRYPTION' in line:
+                preserve = preserve[-1:]
+            elif 'END_DECRYPTION' in line:
                 break
-        elif preserve and line.startswith('  '):
+        elif len(preserve) > 0 and line.startswith('  '):
             # gpg indented line continuation
             preserve[-1] += '\n' + line
-        else:
+        elif not line.startswith('gpg: DBG:'):
             preserve.append(line)
     # Filter out any gpg: DBG: messages that might've slipped through.
-    return (
-        '\n'.join(x for x in preserve if not x.startswith('gpg: DBG:')),
-        error_code
-    )
+    return '\n'.join(preserve), error_code
 
 
 if __name__ == "__main__":
@@ -150,7 +138,7 @@ if __name__ == "__main__":
         env["HOME"] = os.path.expanduser('~')
     for key, val in COMMAND_ENV.items():
         env[key] = val
-    setFlags(env, {'status-fd': '2', 'debug': 'ipc'})
+    setPassGpgOpts(env, {'status-fd': '2', 'debug': 'ipc'})
 
     # Set up subprocess params
     cmd = [COMMAND] + opt_args + ['--'] + pos_args
@@ -166,7 +154,7 @@ if __name__ == "__main__":
 
     # Send response
     decoded_stderr = proc.stderr.decode(CHARSET)
-    stderr, error_code = cleanStderr(decoded_stderr)
+    stderr, error_code = getGpgCodesFromStderr(decoded_stderr)
     sendMessage(
         encodeMessage({
             "exitCode": proc.returncode,
