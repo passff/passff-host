@@ -63,7 +63,7 @@ def setFlags(env, flags):
         opts = '--%s%s %s' % (
             flag,
             value,
-            re.sub(r'--%s(?:=|\s+)\S*' % flag, '', opts)
+            re.sub(r'--%s(?:(?:=|\s+)\S*)?' % flag, '', opts)
         )
     env['PASSWORD_STORE_GPG_OPTS'] = opts.strip()
 
