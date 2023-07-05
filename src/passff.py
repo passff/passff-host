@@ -58,13 +58,17 @@ def setPassGpgOpts(env, opts_dict):
     """ Add arguments to PASSWORD_STORE_GPG_OPTS. """
     opts = env.get('PASSWORD_STORE_GPG_OPTS', '')
     for opt, value in opts_dict.items():
-        re_opt = f"--{opt}"
+        re_opt = new_opt = opt
         if value is not None:
-            value = f"={shlex.quote(value)}"
-            re_opt = rf"--{opt}(?:=|\s+)\S*"
+            re_opt = rf"{opt}(?:=|\s+)\S*"
+            new_opt = (
+                f"{opt}={shlex.quote(value)}"
+                if opt.startswith("--") else
+                f"{opt} {shlex.quote(value)}"
+            )
         # If the user's environment sets this opt, remove it.
         opts = re.sub(re_opt, '', opts)
-        opts = f"--{opt}{value} {opts}"
+        opts = f"{new_opt} {opts}"
     env['PASSWORD_STORE_GPG_OPTS'] = opts.strip()
 
 
@@ -138,7 +142,7 @@ if __name__ == "__main__":
         env["HOME"] = os.path.expanduser('~')
     for key, val in COMMAND_ENV.items():
         env[key] = val
-    setPassGpgOpts(env, {'status-fd': '2', 'debug': 'ipc'})
+    setPassGpgOpts(env, {'--status-fd': '2', '--debug': 'ipc'})
 
     # Set up subprocess params
     cmd = [COMMAND] + opt_args + ['--'] + pos_args
