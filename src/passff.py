@@ -97,13 +97,11 @@ def getGpgCodesFromStderr(stderr):
                 gpg_error_code = 17
 
     # filter out debug and status outputs
-    stderr_filtered = '\n'.join([
-        msg for msg in messages if not (
-            msg.startswith("gpg: DBG:")
-            or msg.startswith("[GNUPG:]")
-        )
-    ])
-    
+    stderr_filtered = '\n'.join(
+        msg for msg in messages
+        if not msg.startswith(("gpg: DBG:", "[GNUPG:]"))
+    )
+
     return stderr_filtered, gpg_error_code
 
 
