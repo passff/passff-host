@@ -88,10 +88,17 @@ def getGpgCodesFromStderr(stderr):
             elif 'NO_SECKEY' in line:
                 gpg_error_code = 17
         elif len(preserve) > 0 and line.startswith('  '):
-            # gpg indented line continuation
-            preserve[-1] += '\n' + line
-        elif not line.startswith("gpg: "):
-            preserve.append(line)
+            # append gpg indented line continuation to previous entry
+            preserve[-1] += f"\n{line}"
+        preserve.append(line)
+    # filter out debug and status outputs
+    # (including indented line continuations)
+    preserve = [
+        line for line in preserve if not (
+            line.startswith("gpg: DBG:")
+            or line.startswith("[GNUPG:]")
+        )
+    ]
     return '\n'.join(preserve), gpg_error_code
 
 
