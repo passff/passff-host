@@ -80,17 +80,17 @@ def getGpgCodesFromStderr(stderr):
         if line.startswith('gpg: DBG:'):
             m = re.search(r'chan_\d+ (?:<-|->) ERR (\d+)', line)
             if m is not None:
-                error_code = int(m.group(1)) & 0xFFFF
+                gpg_error_code = int(m.group(1)) & 0xFFFF
         elif line.startswith("[GNUPG:]"):
             m = re.search(r'ERROR pkdecrypt_failed (\d+)', line)
             if m is not None:
-                error_code = int(m.group(1)) & 0xFFFF
+                gpg_error_code = int(m.group(1)) & 0xFFFF
             elif 'NO_SECKEY' in line:
-                error_code = 17
+                gpg_error_code = 17
         elif len(preserve) > 0 and line.startswith('  '):
             # gpg indented line continuation
             preserve[-1] += '\n' + line
-        else:
+        elif not line.startswith("gpg: "):
             preserve.append(line)
     return '\n'.join(preserve), gpg_error_code
 
