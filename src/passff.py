@@ -69,7 +69,9 @@ def setFlags(env, flags):
 
 
 ERROR_CODE_PAT = r'(?:ERROR pkdecrypt_failed) (\d+)'
+CHAN_ERROR_PAT = r'gpg: DBG: chan_\d+ (?:<-|->) ERR (\d+)'
 GPG_STATUS_PAT = r'\[GNUPG:\](.*)'
+ENC_TO = 'ENC_TO'
 BEGIN_DECRYPTION = 'BEGIN_DECRYPTION'
 END_DECRYPTION = 'END_DECRYPTION'
 NO_SECKEY = 'NO_SECKEY'
@@ -80,12 +82,17 @@ def cleanStderr(stderr):
     # https://github.com/gpg/libgpg-error/blob/master/src/err-codes.h.in
     error_code = 0
     for line in stderr.split("\n"):
-        if re.match(GPG_STATUS_PAT, line):
+        m = re.search(CHAN_ERROR_PAT, line)
+        if m:
+            error_code = int(m.group(1)) & 0xFFFF
+        elif re.match(GPG_STATUS_PAT, line):
             m = re.search(ERROR_CODE_PAT, line)
             if m:
                 error_code = int(m.group(1)) & 0xFFFF
             elif NO_SECKEY in line:
                 error_code = 17
+            elif ENC_TO in line:
+                preserve.clear()
             elif BEGIN_DECRYPTION in line:
                 preserve[:-1] = []
             elif END_DECRYPTION in line:
@@ -95,7 +102,11 @@ def cleanStderr(stderr):
             preserve[-1] += '\n' + line
         else:
             preserve.append(line)
-    return '\n'.join(preserve), error_code
+    # Filter out any gpg: DBG: messages that might've slipped through.
+    return (
+        '\n'.join(x for x in preserve if not x.startswith('gpg: DBG:')),
+        error_code
+    )
 
 
 if __name__ == "__main__":
@@ -139,7 +150,7 @@ if __name__ == "__main__":
         env["HOME"] = os.path.expanduser('~')
     for key, val in COMMAND_ENV.items():
         env[key] = val
-    setFlags(env, {'status-fd': '2', 'debug': 'crypto'})
+    setFlags(env, {'status-fd': '2', 'debug': 'ipc'})
 
     # Set up subprocess params
     cmd = [COMMAND] + opt_args + ['--'] + pos_args
@@ -154,7 +165,8 @@ if __name__ == "__main__":
     proc = subprocess.run(cmd, **proc_params)
 
     # Send response
-    stderr, error_code = cleanStderr(proc.stderr.decode(CHARSET))
+    decoded_stderr = proc.stderr.decode(CHARSET)
+    stderr, error_code = cleanStderr(decoded_stderr)
     sendMessage(
         encodeMessage({
             "exitCode": proc.returncode,
