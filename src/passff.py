@@ -72,39 +72,6 @@ def setPassGpgOpts(env, opts_dict):
     env['PASSWORD_STORE_GPG_OPTS'] = opts.strip()
 
 
-def getGpgCodesFromStderr(stderr):
-    messages = []
-    for line in stderr.split("\n"):
-        # append gpg indented line continuation to previous message
-        if len(messages) > 0 and line.startswith('  '):
-            messages[-1] += f"\n{line}"
-        else:
-            messages.append(line)
-
-    # extract GPG error codes from status and debug messages
-    # https://github.com/gpg/libgpg-error/blob/master/src/err-codes.h.in
-    gpg_error_code = 0
-    for msg in messages:
-        if msg.startswith('gpg: DBG:'):
-            m = re.search(r'chan_\d+ (?:<-|->) ERR (\d+)', msg)
-            if m is not None:
-                gpg_error_code = int(m.group(1)) & 0xFFFF
-        elif msg.startswith("[GNUPG:]"):
-            m = re.search(r'ERROR pkdecrypt_failed (\d+)', msg)
-            if m is not None:
-                gpg_error_code = int(m.group(1)) & 0xFFFF
-            elif 'NO_SECKEY' in line:
-                gpg_error_code = 17
-
-    # filter out debug and status outputs
-    stderr_filtered = '\n'.join(
-        msg for msg in messages
-        if not msg.startswith(("gpg: DBG:", "[GNUPG:]"))
-    )
-
-    return stderr_filtered, gpg_error_code
-
-
 if __name__ == "__main__":
     # Read message from standard input
     receivedMessage = getMessage()
@@ -161,13 +128,10 @@ if __name__ == "__main__":
     proc = subprocess.run(cmd, **proc_params)
 
     # Send response
-    decoded_stderr = proc.stderr.decode(CHARSET)
-    stderr, gpg_error_code = getGpgCodesFromStderr(decoded_stderr)
     sendMessage(
         encodeMessage({
             "exitCode": proc.returncode,
             "stdout": proc.stdout.decode(CHARSET),
-            "stderr": stderr,
-            "gpgErrorCode": gpg_error_code,
+            "stderr": proc.stderr.decode(CHARSET),
             "version": VERSION
         }))
