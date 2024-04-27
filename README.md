@@ -32,7 +32,14 @@ curl -sSL github.com/passff/passff-host/releases/latest/download/install_host_ap
 
 Users of other supported browsers need to replace the last argument (`firefox`) by `librewolf`, `chrome`, `opera`, `chromium` or `vivaldi`.
 The script will download the host application (a small python script) and the add-on's manifest file (a JSON config file) and put them in the right place.
+
 If you're concerned about executing a script that downloads files from the web, you can download the files yourself and run the script with the `--local` option instead or link the files yourself. Details below.
+
+For **OpenBSD** users (cf. [issue #67](https://github.com/passff/passff-host/issues/67)), note that Firefox is patched with the [unveil(2)](https://man.openbsd.org/unveil.2) system call to restrict access to the filesystem, in order to make Firefox more secure. Therefore, Firefox on OpenBSD can only execute files for which execution is explicitly permitted in a local configuration file. To allow execution of the PassFF host script, add the following line to the file `/etc/firefox/unveil.main` on your OpenBSD system:
+```
+~/.mozilla/native-messaging-hosts rx
+```
+Please keep in mind that this does still lessen the security provided by the default OpenBSD settings. Make the change at your own risk!
 
 #### Windows
 Download the `install_host_app.bat` script from [our releases page](https://github.com/passff/passff-host/releases) and execute it from within a shell with a correct PATH, mentioning your browser in the last argument (i.e., replace `firefox` by `librewolf`, `chrome`, `opera`, `chromium` or `vivaldi` if necessary).
@@ -168,6 +175,7 @@ If your browser is confined by a security module such as AppArmor, then its poli
 $ grep passff /var/log/syslog
 Apr 22 19:55:24 <HOST> kernel: [70746.170024] audit: type=1400 audit(1650650124.793:2258): apparmor="DENIED" operation="exec" profile="firefox" name="/home/<USER>/.mozilla/native-messaging-hosts/passff.py" pid=73124 comm=444F4D20576F726B6572 requested_mask="x" denied_mask="x" fsuid=1000 ouid=1000
 ```
+Similarly, OpenBSD has its own ways to restrict execution of scripts by Firefox. See the "Installation" section above for instructions on how to remove those restrictions.
 
 #### Testing OTP support
 ```console
