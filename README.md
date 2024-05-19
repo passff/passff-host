@@ -200,4 +200,6 @@ If you are using [NixOS linux](https://github.com/tadfisher/pass-otp#nixnixos), 
     (firefox.override { extraNativeMessagingHosts = [(passff-host.overrideAttrs (old: { dontStrip = true; patchPhase = ''
     sed -i 's#COMMAND = "pass"#COMMAND = "${pass.withExtensions (ext: with ext; [pass-otp])}/bin/pass"#' src/passff.py
     ''; }))]; })
-    ...
+    ...];
+
+"..." is to be replaced by the list of all other packages installed by root on your NixOS.
