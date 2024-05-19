@@ -1,4 +1,4 @@
-passff-host
+dqpassff-host
 ===========
 
 [![Join the chat at https://gitter.im/jvenant/passff](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jvenant/passff?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
@@ -191,3 +191,13 @@ By modifying the *preferences section* in `passff.py`, you will be able to set:
   - `COMMAND_ARGS`: additional command line arguments that are passed to `pass`,
   - `COMMAND_ENV`: additional environment variables,
   - `CHARSET`: the shell stdout charset.
+
+If you are using [NixOS linux](https://github.com/tadfisher/pass-otp#nixnixos), you should install extensions like pass-otp in passff-host with:
+
+    environment.systemPackages = with pkgs; [
+    ...
+    (pass.withExtensions (ext: with ext; [pass-otp]))
+    (firefox.override { extraNativeMessagingHosts = [(passff-host.overrideAttrs (old: { dontStrip = true; patchPhase = ''
+    sed -i 's#COMMAND = "pass"#COMMAND = "${pass.withExtensions (ext: with ext; [pass-otp])}/bin/pass"#' src/passff.py
+    ''; }))]; })
+    ...
