@@ -51,6 +51,18 @@ install_host_app.bat firefox
 
 Note: Older Windows versions might require powershell to be installed manually as the install script uses powershell internally. Windows 10 users should be fine out of the box.
 
+#### NixOS linux
+
+Install the version without extensions to pass with:
+
+    environment.systemPackages = with pkgs; [
+    ...
+    (firefox.override { extraNativeMessagingHosts = [passff-host]; })
+    ...];
+
+The string "..." is to be replaced by the list of all other packages installed by root on your NixOS. The way to add extenstions to pass is [below](https://github.com/jidhub/passff-host#preferences).
+
+
 #### Latest from GitHub
 This is not recommended! Only for developers and for testing purposes!
 
@@ -191,3 +203,15 @@ By modifying the *preferences section* in `passff.py`, you will be able to set:
   - `COMMAND_ARGS`: additional command line arguments that are passed to `pass`,
   - `COMMAND_ENV`: additional environment variables,
   - `CHARSET`: the shell stdout charset.
+
+If you are using [NixOS linux](https://github.com/tadfisher/pass-otp#nixnixos), you can install extensions like pass-otp in passff-host with:
+
+    environment.systemPackages = with pkgs; [
+    ...
+    (pass.withExtensions (ext: with ext; [pass-otp]))
+    (firefox.override { extraNativeMessagingHosts = [(passff-host.overrideAttrs (old: { dontStrip = true; patchPhase = ''
+    sed -i 's#COMMAND = "pass"#COMMAND = "${pass.withExtensions (ext: with ext; [pass-otp])}/bin/pass"#' src/passff.py
+    ''; }))]; })
+    ...];
+
+The string "..." is to be replaced by the list of all other packages installed by root on your NixOS.
