@@ -53,14 +53,14 @@ Note: Older Windows versions might require powershell to be installed manually a
 
 #### NixOS linux
 
-Install with:
+Install the version without extensions to pass with:
 
     environment.systemPackages = with pkgs; [
     ...
     (firefox.override { extraNativeMessagingHosts = [passff-host]; })
     ...];
 
-The string "..." is to be replaced by the list of all other packages installed by root on your NixOS.
+The string "..." is to be replaced by the list of all other packages installed by root on your NixOS. The way to add extenstions to pass is [below](https://github.com/jidhub/passff-host#preferences).
 
 
 #### Latest from GitHub
