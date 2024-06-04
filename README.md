@@ -1,8 +1,6 @@
 passff-host
 ===========
 
-[![Join the chat at https://gitter.im/jvenant/passff](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/jvenant/passff?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 Host app for the WebExtension **[PassFF](https://addons.mozilla.org/firefox/addon/passff)**
 
 ### Overview
@@ -14,7 +12,7 @@ This piece of software wraps around the **[zx2c4 pass](http://www.zx2c4.com/proj
 * [`python3`](https://docs.python.org/3.5/) (>= 3.5)
 * [`pass`](https://www.passwordstore.org/)
 
-In most cases, a **graphical *pinentry* program** is also needed for use with the PassFF browser extension. For that, please refer to the instructions given in the [PassFF repository](https://github.com/passff/passff#a-graphical-pinentry-program).
+In most cases, a **graphical *pinentry* program** is also needed for use with the PassFF browser extension. For that, please refer to the instructions given in the [PassFF repository](https://codeberg.org/PassFF/passff#a-graphical-pinentry-program).
 
 #### For the install script (except Windows)
 * `curl`
@@ -24,10 +22,10 @@ In most cases, a **graphical *pinentry* program** is also needed for use with th
 
 #### Linux, MacOS, * BSD
 
-Download the latest `install_host_app.sh` script from [our releases page](https://github.com/passff/passff-host/releases) and execute it. As an example, Firefox users can do this in one line like so:
+Download the latest `install_host_app.sh` script from [our releases page](https://codeberg.org/PassFF/passff-host/releases) and execute it. As an example, Firefox users can do this in one line like so:
 
 ```bash
-curl -sSL github.com/passff/passff-host/releases/latest/download/install_host_app.sh | bash -s -- firefox
+curl -sSL https://codeberg.org/PassFF/passff-host/releases/latest/download/install_host_app.sh | bash -s -- firefox
 ```
 
 Users of other supported browsers need to replace the last argument (`firefox`) by `librewolf`, `chrome`, `opera`, `chromium` or `vivaldi`.
@@ -35,14 +33,14 @@ The script will download the host application (a small python script) and the ad
 
 If you're concerned about executing a script that downloads files from the web, you can download the files yourself and run the script with the `--local` option instead or link the files yourself. Details below.
 
-For **OpenBSD** users (cf. [issue #67](https://github.com/passff/passff-host/issues/67)), note that Firefox is patched with the [unveil(2)](https://man.openbsd.org/unveil.2) system call to restrict access to the filesystem, in order to make Firefox more secure. Therefore, Firefox on OpenBSD can only execute files for which execution is explicitly permitted in a local configuration file. To allow execution of the PassFF host script, add the following line to the file `/etc/firefox/unveil.main` on your OpenBSD system:
+For **OpenBSD** users (cf. [issue #67](https://codeberg.org/PassFF/passff-host/issues/67)), note that Firefox is patched with the [unveil(2)](https://man.openbsd.org/unveil.2) system call to restrict access to the filesystem, in order to make Firefox more secure. Therefore, Firefox on OpenBSD can only execute files for which execution is explicitly permitted in a local configuration file. To allow execution of the PassFF host script, add the following line to the file `/etc/firefox/unveil.main` on your OpenBSD system:
 ```
 ~/.mozilla/native-messaging-hosts rx
 ```
 Please keep in mind that this does still lessen the security provided by the default OpenBSD settings. Make the change at your own risk!
 
 #### Windows
-Download the `install_host_app.bat` script from [our releases page](https://github.com/passff/passff-host/releases) and execute it from within a shell with a correct PATH, mentioning your browser in the last argument (i.e., replace `firefox` by `librewolf`, `chrome`, `opera`, `chromium` or `vivaldi` if necessary).
+Download the `install_host_app.bat` script from [our releases page](https://codeberg.org/PassFF/passff-host/releases) and execute it from within a shell with a correct PATH, mentioning your browser in the last argument (i.e., replace `firefox` by `librewolf`, `chrome`, `opera`, `chromium` or `vivaldi` if necessary).
 *The rule of thumb is: if you can execute pass and python from your shell, then your host application will be installed correctly.*
 
 ```
@@ -60,10 +58,11 @@ Install the version without extensions to pass with:
     (firefox.override { extraNativeMessagingHosts = [passff-host]; })
     ...];
 
-The string "..." is to be replaced by the list of all other packages installed by root on your NixOS. The way to add extenstions to pass is [below](https://github.com/jidhub/passff-host#preferences).
+The string "..." is to be replaced by the list of all other packages installed by root on your NixOS. The way to add extentions to pass is [below](https://github.com/jidhub/passff-host#preferences).
 
 
-#### Latest from GitHub
+#### Latest from git
+
 This is not recommended! Only for developers and for testing purposes!
 
 Clone the repository. Then, run the following command.
@@ -74,7 +73,7 @@ make [VERSION=testing|...] [BROWSER=firefox|librewolf|chrome|opera|chromium|viva
 
 This will generate the host application and installation scripts for the given `VERSION` (`testing` by default), and copy the host application and manifest files to the right place for your `BROWSER` (`firefox` by default).
 
-This uses the `--local` option of the `install_host_app.sh` script, which instructs it to use the files on disk rather than downloading them from GitHub.
+This uses the `--local` option of the `install_host_app.sh` script, which instructs it to use the files on disk rather than downloading them from the official git repository.
 
 If this doesn't work, you can link the files yourself. First, change the `path` value in the `passff.json` file to be the absolute path to the project's `bin/testing/passff.py` file. Then symlink (or copy) the file `bin/testing/passff.json` to the appropriate location for your browser and OS:
 
@@ -131,7 +130,7 @@ If this doesn't work, you can link the files yourself. First, change the `path` 
 #### Connection to the host app failed or returned an unexpected result
 
 > Connection to the host app failed or returned an unexpected result!
-> Make sure you have the latest version of the PassFF host app installed by following the installation instructions on GitHub.
+> Make sure you have the latest version of the PassFF host app installed by following the installation instructions in the official git repository.
 
 > Script execution failed.
 
@@ -191,7 +190,7 @@ Similarly, OpenBSD has its own ways to restrict execution of scripts by Firefox.
 
 #### Testing OTP support
 ```console
-$ echo -e "\x19\x00\x00\x00[\"otp\",\"/www/github.com\"]" | /path/to/passff.py | tail -c +4; echo
+$ echo -e "\x19\x00\x00\x00[\"otp\",\"/www/example.com\"]" | /path/to/passff.py | tail -c +4; echo
 {"exitCode": 0, "stderr": "", "stdout": "123456\n", "version": "1.0.1"}
 ```
 

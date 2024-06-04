@@ -3,8 +3,8 @@ SETLOCAL
 
 SET "APP_NAME=passff"
 SET "VERSION=_VERSIONHOLDER_"
-SET "HOST_URL=https://github.com/passff/passff-host/releases/download/%VERSION%/passff.py"
-SET "MANIFEST_URL=https://github.com/passff/passff-host/releases/download/%VERSION%/passff.json"
+SET "HOST_URL=https://codeberg.org/PassFF/passff-host/releases/download/%VERSION%/passff.py"
+SET "MANIFEST_URL=https://codeberg.org/PassFF/passff-host/releases/download/%VERSION%/passff.json"
 
 SET "TARGET_DIR=%APPDATA%\%APP_NAME%"
 SET "HOST_MANIFEST=%APP_NAME%.json"
@@ -41,15 +41,15 @@ IF NOT "%1"=="" (
         SET "TARGET_REG=HKCU\Software\Google\Chrome\NativeMessagingHosts\%APP_NAME%"
         SHIFT
     ) ELSE IF "%1"=="chromium"  (
-        ECHO Chromium registry key location for Native Messaging Hosts is undocumented. Assuming key for Chrome. Please provide feedback if this worked: https://github.com/passff/passff/issues/202
+        ECHO Chromium registry key location for Native Messaging Hosts is undocumented. Assuming key for Chrome. Please provide feedback if this worked: https://codeberg.org/PassFF/passff/issues/202
         SET "TARGET_REG=HKCU\Software\Google\Chrome\NativeMessagingHosts\%APP_NAME%"
         SHIFT
     ) ELSE IF "%1"=="opera"  (
-        ECHO Opera registry key location for Native Messaging Hosts is undocumented. Assuming key for Chrome. Please provide feedback if this worked: https://github.com/passff/passff/issues/202
+        ECHO Opera registry key location for Native Messaging Hosts is undocumented. Assuming key for Chrome. Please provide feedback if this worked: https://codeberg.org/PassFF/passff/issues/202
         SET "TARGET_REG=HKCU\Software\Google\Chrome\NativeMessagingHosts\%APP_NAME%"
         SHIFT
     ) ELSE IF "%1"=="vivaldi"  (
-        ECHO Vivaldi registry key location for Native Messaging Hosts is undocumented. Assuming key for Chrome. Please provide feedback if this worked: https://github.com/passff/passff/issues/202
+        ECHO Vivaldi registry key location for Native Messaging Hosts is undocumented. Assuming key for Chrome. Please provide feedback if this worked: https://codeberg.org/PassFF/passff/issues/202
         SET "TARGET_REG=HKCU\Software\Google\Chrome\NativeMessagingHosts\%APP_NAME%"
         SHIFT
     ) ELSE (

@@ -31,11 +31,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - [OTP](https://github.com/tadfisher/pass-otp) support
 
 ### Changed
-- Makefile refactored and [usage](https://github.com/passff/passff-host#latest-from-github) updated
+- Makefile refactored and [usage](https://codeberg.org/PassFF/passff-host#latest-from-git) updated
 
 ### Fixed
 - Flake8 conformance & documentation improved
-- [Passff not comunicating with passff-host](https://github.com/passff/passff-host/issues/27)
+- [Passff not comunicating with passff-host](https://codeberg.org/PassFF/passff-host/issues/27)
 
 ## [1.0.2] - 2018-07-01
 ### Added
@@ -55,13 +55,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial Release
 
-[Unreleased]: https://github.com/passff/passff-host/compare/1.2.4...HEAD
-[1.2.4]: https://github.com/passff/passff-host/compare/1.2.3...1.2.4
-[1.2.3]: https://github.com/passff/passff-host/compare/1.2.2...1.2.3
-[1.2.2]: https://github.com/passff/passff-host/compare/1.2.1...1.2.2
-[1.2.1]: https://github.com/passff/passff-host/compare/1.2.0...1.2.1
-[1.2.0]: https://github.com/passff/passff-host/compare/1.1.0...1.2.0
-[1.1.0]: https://github.com/passff/passff-host/compare/1.0.2...1.1.0
-[1.0.2]: https://github.com/passff/passff-host/compare/1.0.1...1.0.2
-[1.0.1]: https://github.com/passff/passff-host/compare/1.0...1.0.1
-[1.0.0]: https://github.com/passff/passff-host/releases/tag/1.0
+[Unreleased]: https://codeberg.org/PassFF/passff-host/compare/1.2.4...HEAD
+[1.2.4]: https://codeberg.org/PassFF/passff-host/compare/1.2.3...1.2.4
+[1.2.3]: https://codeberg.org/PassFF/passff-host/compare/1.2.2...1.2.3
+[1.2.2]: https://codeberg.org/PassFF/passff-host/compare/1.2.1...1.2.2
+[1.2.1]: https://codeberg.org/PassFF/passff-host/compare/1.2.0...1.2.1
+[1.2.0]: https://codeberg.org/PassFF/passff-host/compare/1.1.0...1.2.0
+[1.1.0]: https://codeberg.org/PassFF/passff-host/compare/1.0.2...1.1.0
+[1.0.2]: https://codeberg.org/PassFF/passff-host/compare/1.0.1...1.0.2
+[1.0.1]: https://codeberg.org/PassFF/passff-host/compare/1.0...1.0.1
+[1.0.0]: https://codeberg.org/PassFF/passff-host/releases/tag/1.0

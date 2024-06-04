@@ -7,8 +7,8 @@ set -e
 
 APP_NAME="passff"
 VERSION="_VERSIONHOLDER_"
-HOST_URL="https://github.com/passff/passff-host/releases/download/$VERSION/passff.py"
-MANIFEST_URL="https://github.com/passff/passff-host/releases/download/$VERSION/passff.json"
+HOST_URL="https://codeberg.org/PassFF/passff-host/releases/download/$VERSION/passff.py"
+MANIFEST_URL="https://codeberg.org/PassFF/passff-host/releases/download/$VERSION/passff.json"
 KERNEL_NAME=$(uname -s)
 
 # Find target dirs for various browsers & OS'es
