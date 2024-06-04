@@ -1,8 +1,21 @@
 # Changelog
 All notable changes to this project will be documented in this file.
 
-The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/)
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [1.2.4] - 2023-12-06
+### Added
+- Include debug outputs from GPG to allow improved error messages in PassFF
+- Add installer support for gopass
+
+## [1.2.3] - 2021-11-03
+### Added
+- Add support for LibreWolf
+
+## [1.2.2] - 2021-10-06
+### Added
+- Add support for gopass when renamed to pass
 
 ## [1.2.1] - 2019-04-25
 ### Fixed
@@ -42,7 +55,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Initial Release
 
-[Unreleased]: https://github.com/passff/passff-host/compare/1.1.0...HEAD
+[Unreleased]: https://github.com/passff/passff-host/compare/1.2.4...HEAD
+[1.2.4]: https://github.com/passff/passff-host/compare/1.2.3...1.2.4
+[1.2.3]: https://github.com/passff/passff-host/compare/1.2.2...1.2.3
+[1.2.2]: https://github.com/passff/passff-host/compare/1.2.1...1.2.2
+[1.2.1]: https://github.com/passff/passff-host/compare/1.2.0...1.2.1
+[1.2.0]: https://github.com/passff/passff-host/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/passff/passff-host/compare/1.0.2...1.1.0
 [1.0.2]: https://github.com/passff/passff-host/compare/1.0.1...1.0.2
 [1.0.1]: https://github.com/passff/passff-host/compare/1.0...1.0.1
