@@ -25,7 +25,7 @@ In most cases, a **graphical *pinentry* program** is also needed for use with th
 Download the latest `install_host_app.sh` script from [our releases page](https://codeberg.org/PassFF/passff-host/releases) and execute it. As an example, Firefox users can do this in one line like so:
 
 ```bash
-curl -sSL https://codeberg.org/PassFF/passff-host/releases/latest/download/install_host_app.sh | bash -s -- firefox
+curl -sSL https://codeberg.org/PassFF/passff-host/releases/download/latest/install_host_app.sh | bash -s -- firefox
 ```
 
 Users of other supported browsers need to replace the last argument (`firefox`) by `librewolf`, `chrome`, `opera`, `chromium` or `vivaldi`.
