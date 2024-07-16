@@ -127,11 +127,21 @@ if __name__ == "__main__":
     # Run and communicate with pass script
     proc = subprocess.run(cmd, **proc_params)
 
+    responseMessage = {
+        "exitCode": proc.returncode,
+        "stdout": proc.stdout.decode(CHARSET),
+        "stderr": proc.stderr.decode(CHARSET),
+        "version": VERSION
+    }
+
+    if (
+        responseMessage["exitCode"] == 0
+        and opt_args[0] == "grep"
+    ):
+        # GPG debug outputs for `grep` over the whole password store
+        # can easily exceed the size limit for native messages (1 MB).
+        # In case of exit code 0, they are not used anyways.
+        responseMessage["stderr"] = ""
+
     # Send response
-    sendMessage(
-        encodeMessage({
-            "exitCode": proc.returncode,
-            "stdout": proc.stdout.decode(CHARSET),
-            "stderr": proc.stderr.decode(CHARSET),
-            "version": VERSION
-        }))
+    sendMessage(encodeMessage(responseMessage))
