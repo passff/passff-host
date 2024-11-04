@@ -33,11 +33,30 @@ The script will download the host application (a small python script) and the ad
 
 If you're concerned about executing a script that downloads files from the web, you can download the files yourself and run the script with the `--local` option instead or link the files yourself. Details below.
 
+##### Unveil restrictions on OpenBSD
 For **OpenBSD** users (cf. [issue #67](https://codeberg.org/PassFF/passff-host/issues/67)), note that Firefox is patched with the [unveil(2)](https://man.openbsd.org/unveil.2) system call to restrict access to the filesystem, in order to make Firefox more secure. Therefore, Firefox on OpenBSD can only execute files for which execution is explicitly permitted in a local configuration file. To allow execution of the PassFF host script, add the following line to the file `/etc/firefox/unveil.main` on your OpenBSD system:
 ```
 ~/.mozilla/native-messaging-hosts rx
 ```
 Please keep in mind that this does still lessen the security provided by the default OpenBSD settings. Make the change at your own risk!
+
+##### AppArmor restrictions on Linux
+For **Linux** users running apparmor, Firefox might be running an apparmor profile that restricts execution of binaries, which can be fixed by adding an override to allow execution of `pass.py`. If this is the case, the passff UI will show "`ls -> (-1) PassFF failed to execute the host app`" and the systemd journal (`journalctl -f`) will typically contain something like:
+
+```
+kernel: audit: type=1400 audit(1730744626.014:1382): apparmor="DENIED" operation="exec" class="file" profile="firefox" name="/home/user/.mozilla/native-messaging-hosts/passff.py" pid=31846 comm=444F4D20576F726B6572 requested_mask="x" denied_mask="x" fsuid=1000 ouid=1000
+```
+
+For example on Ubuntu with Firefox from the [Mozillateam PPA](https://launchpad.net/~mozillateam/+archive/ubuntu/ppa) this restriction seems to have been introduced somewhere in 2024 with the `/etc/apparmor.d/usr.bin.firefox` file. Since that file contains an include directive for local overrides, you can fix the issue by creating or modifiying `/etc/apparmor.d/local/usr.bin.firefox` with:
+
+```
+owner @{HOME}/.mozilla/native-messaging-hosts/passff.py ixr,
+/usr/bin/pass uxr,
+```
+
+These rules allow executing `passff.py` with the same limitations as firefox and allow executing the `pass` binary without further limitations (`ux` for unconfined execute), since `pass` uses `bash`, `getopt`, `which` and some other tools that would otherwise need to be explicitly allowed. Please keep in mind that this does still lessen the security provided by the default AppArmor settings. Make the change at your own risk!
+
+After creating or modifying this file, you can reboot or run ` sudo aa-enforce /etc/apparmor.d/usr.bin.firefox` to reload the AppArmor profile (but in Ubuntu 22.10 there seems to be an issue with multiple firefox profiles that prevent reloading it this way, rebooting does work as expected).
 
 #### Windows
 Download the `install_host_app.bat` script from [our releases page](https://codeberg.org/PassFF/passff-host/releases) and execute it from within a shell with a correct PATH, mentioning your browser in the last argument (i.e., replace `firefox` by `librewolf`, `chrome`, `opera`, `chromium` or `vivaldi` if necessary).
