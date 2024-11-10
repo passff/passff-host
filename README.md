@@ -77,7 +77,7 @@ Install the version without extensions to pass with:
     (firefox.override { extraNativeMessagingHosts = [passff-host]; })
     ...];
 
-The string "..." is to be replaced by the list of all other packages installed by root on your NixOS. The way to add extentions to pass is [below](https://github.com/jidhub/passff-host#preferences).
+The string "..." is to be replaced by the list of all other packages installed by root on your NixOS. Instructions to add extensions like pass-otp to pass under NixOS are in the preferences section below.
 
 
 #### Latest from git
