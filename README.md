@@ -142,6 +142,19 @@ If this doesn't work, you can link the files yourself. First, change the `path` 
   - OS X
     - Per-user: `~/Library/Application Support/Vivaldi/NativeMessagingHosts/passff.json`
     - System-wide: `/Library/Application Support/Vivaldi/NativeMessagingHosts/passff.json`
+- Mullvad Browser (based on TorBrowser)
+  - Linux
+    - `mullvad-browser/Data/native-messaging-hosts/passff.json`
+    - The key used for `pass` needs to be added to Mullvad's `.gnugp` directory:
+      - `gpg --homedir mullvad-browser/Browser/.gnupg --list-keys` (if this returns an error, kill the process it shows)
+      - `gpg --homedir mullvad-browser/Browser/.gnupg --import /path/to/key`
+      - Get the ID from `gpg --homedir mullvad-browser/Browser/.gnupg --list-keys` and set the trust to "ultimate":
+        ```bash
+        $ gpg --homedir mullvad-browser/Browser/.gnupg --edit-key your_key_id
+        > trust
+        > 5
+        ```
+    - Restart the computer, and use Mullvad to access `pass` before accessing via the CLI
 
 ### Troubleshooting
 
