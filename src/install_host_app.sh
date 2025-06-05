@@ -104,7 +104,7 @@ else
   exit 1
 fi
 
-PASS_PATH="$(which pass || which gopass)"
+PASS_PATH="$(which pass || which gopass || which passage)"
 if [ -x "$PASS_PATH" ]; then
   echo "Pass executable located at $PASS_PATH"
 else
